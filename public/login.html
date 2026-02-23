@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - World of Haxball</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <div class="auth-card">
+        <h2>Login</h2>
+
+        <form id="login-form">
+          <div class="auth-field">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" required />
+          </div>
+
+          <div class="auth-field">
+            <label>Password</label>
+            <input type="password" id="login-password" required />
+          </div>
+
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+
+        <p class="auth-switch">
+          Don't have an account?
+          <a href="register.html">Register</a>
+        </p>
+
+        <p id="login-message" class="auth-message"></p>
+      </div>
+    </main>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World of Haxball</title>
+
+    <!-- Modern font for clean UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="vote-toast" class="vote-toast"></div>
+    <!-- NAVBAR -->
+    <header class="navbar-wrapper">
+      <div class="container">
+        <div class="navbar">
+          <!-- LEFT: ONLY LOGO -->
+          <div class="nav-left">
+            <a href="index.html" class="logo-only">
+              <img
+                src="assets/logo3.png"
+                alt="World of Haxball Logo"
+                class="logo"
+              />
+            </a>
+
+            <span class="beta-badge">BETA v1.0</span>
+          </div>
+
+          <!-- RIGHT: NAV LINKS -->
+          <nav class="nav-right" aria-label="Main navigation">
+            <ul class="nav-links" id="nav-links">
+              <li>
+                <a href="index.html" class="nav-link nav-link-active">Home</a>
+              </li>
+              <li class="nav-item-dropdown">
+                <a href="#" class="nav-link dropdown-toggle">
+                  Competitions
+                  <span class="dropdown-arrow"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="europe.html" class="dropdown-item">Europe</a>
+                  </li>
+                  <li>
+                    <a href="na.html" class="dropdown-item">North America</a>
+                  </li>
+                  <li><a href="asia.html" class="dropdown-item">Asia</a></li>
+                  <li><a href="#" class="dropdown-item">Turkey</a></li>
+                </ul>
+              </li>
+              <li><a href="#" class="nav-link">Tournaments</a></li>
+              <li><a href="#" class="nav-link">Leaderboards</a></li>
+              <li><a href="#" class="nav-link">Teams</a></li>
+
+              <!-- buton LOGIN -->
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+
+              <li id="nav-user" class="nav-user">
+                <span class="nav-user-name" id="nav-username"></span>
+                <button
+                  type="button"
+                  class="nav-logout-btn"
+                  id="nav-logout-btn"
+                >
+                  LOGOUT
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- MOBILE TOGGLE (fixed on the right) -->
+          <button
+            class="menu-toggle"
+            id="mobile-menu"
+            aria-label="Toggle navigation"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT AREA (center panel different from side background) -->
+    <main class="page-wrapper">
+      <div class="page-content">
+        <div class="layout-two-col">
+          <!-- ========== LEFT: MAIN CONTENT (HERO) ========== -->
+          <div class="layout-main">
+            <section class="hero">
+              <div class="hero-inner">
+                <div class="hero-copy">
+                  <p class="hero-kicker">Haxball Competitive Hub</p>
+                  <h1>
+                    Manage your Haxball tournaments like a real esports
+                    platform.
+                  </h1>
+                  <p>
+                    Create weekly cups, register teams, track players’ stats and
+                    keep your Haxball community organized in one modern,
+                    dark-mode dashboard.
+                  </p>
+                  <div class="hero-actions">
+                    <a href="#" class="btn-primary hero-btn"
+                      >View active tournaments</a
+                    >
+                    <button class="btn-ghost">Register a team</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- aici poți adăuga pe viitor alte secțiuni în stânga -->
+          </div>
+
+          <!-- ========== RIGHT: SIDEBAR (OWNERS + RANKING) ========== -->
+          <aside class="layout-sidebar">
+            <!-- Card 1: For league owners -->
+             <article class="sidebar-card ranking-card">
+              <h3 class="ranking-title">Top leagues today</h3>
+              <p class="ranking-subtitle">
+                Live community votes by region and map. One vote per account per
+                day.
+              </p>
+
+              <!-- aici JS pune ligile -->
+              <div class="ranking-list" id="ranking-list"></div>
+            </article>
+            
+
+            <div class="sidebar-divider"></div>
+
+            <!-- Card 2: Top leagues today -->
+            <article class="sidebar-card owners-hero-card">
+              <h3>For league owners</h3>
+              <p>
+                Running a Haxball league and want it featured on World of
+                Haxball?
+              </p>
+
+              <ul>
+                <li>List your league under Futsal, BIG or RS maps</li>
+                <li>Get a dedicated competition page</li>
+                <li>Reach more teams and players</li>
+              </ul>
+
+              <a href="europe.html#apply" class="btn-primary owners-hero-btn">
+                List your league
+              </a>
+              <span class="owners-hero-note">
+                Short application → continue on Discord.
+              </span>
+            </article>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- JS (mobile menu, etc.) -->
+    <script src="js/main.js"></script>
+  </body>
+</html>
