@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>World of Haxball</title>
+
+    <!-- Modern font for clean UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+<body>
+  <!-- poți folosi același navbar ca pe index -->
+  <!-- ... navbar aici ... -->
+   <!-- NAVBAR -->
+    <header class="navbar-wrapper">
+      <div class="container">
+        <div class="navbar">
+          <!-- LEFT: ONLY LOGO -->
+          <div class="nav-left">
+            <a href="index.html" class="logo-only">
+              <img
+                src="assets/logo3.png"
+                alt="World of Haxball Logo"
+                class="logo"
+              />
+            </a>
+
+            <span class="beta-badge">BETA v1.0</span>
+          </div>
+
+          <!-- RIGHT: NAV LINKS -->
+          <nav class="nav-right" aria-label="Main navigation">
+            <ul class="nav-links" id="nav-links">
+              <li>
+                <a href="index.html" class="nav-link nav-link-active">Home</a>
+              </li>
+              <li class="nav-item-dropdown">
+                <a href="#" class="nav-link dropdown-toggle">
+                  Competitions
+                  <span class="dropdown-arrow"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="europe.html" class="dropdown-item">Europe</a>
+                  </li>
+                  <li>
+                    <a href="na.html" class="dropdown-item">North America</a>
+                  </li>
+                  <li><a href="asia.html" class="dropdown-item">Asia</a></li>
+                  <li><a href="#" class="dropdown-item">Turkey</a></li>
+                </ul>
+              </li>
+              <li><a href="#" class="nav-link">Tournaments</a></li>
+              <li><a href="#" class="nav-link">Leaderboards</a></li>
+              <li><a href="#" class="nav-link">Teams</a></li>
+
+              <!-- buton LOGIN -->
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+
+              <li id="nav-user" class="nav-user">
+                <span class="nav-user-name" id="nav-username"></span>
+                <button
+                  type="button"
+                  class="nav-logout-btn"
+                  id="nav-logout-btn"
+                >
+                  LOGOUT
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- MOBILE TOGGLE (fixed on the right) -->
+          <button
+            class="menu-toggle"
+            id="mobile-menu"
+            aria-label="Toggle navigation"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+  <main class="page-wrapper">
+    <div class="page-content">
+      <section class="ranking-page">
+        <h1>League ranking</h1>
+        <p class="ranking-page-subtitle">
+          Full global ranking with all registered leagues. One vote per account per day.
+        </p>
+
+        <div class="ranking-list" id="ranking-list-full"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

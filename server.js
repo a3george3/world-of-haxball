@@ -156,9 +156,9 @@ app.get('/api/auth/me', authRequired, async (req, res) => {
 //              LEAGUE RANKING
 // =========================================
 
-app.get('/api/leagues/ranking', async (req, res) => {
+app.get("/api/leagues/ranking", async (req, res) => {
   try {
-    const rows = await query(
+    const [rows] = await pool.query(
       `
       SELECT 
         l.id,
@@ -166,21 +166,51 @@ app.get('/api/leagues/ranking', async (req, res) => {
         l.region,
         l.map_name,
         l.discord_link,
-        COUNT(v.id) AS votes_today
+        l.logo_url,
+        COALESCE(COUNT(v.id), 0) AS votes_today
       FROM leagues l
-      LEFT JOIN league_votes v
-        ON l.id = v.league_id
-       AND v.vote_date = CURDATE()
+      LEFT JOIN league_votes v 
+        ON v.league_id = l.id
+        AND DATE(v.vote_date) = CURDATE()
       GROUP BY l.id
-      ORDER BY votes_today DESC, l.name ASC
-      LIMIT 10
+      ORDER BY votes_today DESC, l.created_at DESC
+      LIMIT 5
       `
     );
 
     res.json(rows);
   } catch (err) {
-    console.error('Ranking error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    console.error("Error loading ranking:", err);
+    res.status(500).json({ message: "Error loading ranking" });
+  }
+});
+
+// GET /api/leagues/ranking/full
+app.get("/api/leagues/ranking/full", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        l.id,
+        l.name,
+        l.region,
+        l.map_name,
+        l.discord_link,
+        l.logo_url,
+        COALESCE(COUNT(v.id), 0) AS votes_today
+      FROM leagues l
+      LEFT JOIN league_votes v 
+        ON v.league_id = l.id
+        AND DATE(v.vote_date) = CURDATE()
+      GROUP BY l.id
+      ORDER BY votes_today DESC, l.created_at DESC
+      `
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error loading full ranking:", err);
+    res.status(500).json({ message: "Error loading full ranking" });
   }
 });
 

@@ -1317,7 +1317,7 @@ a {
 
 .ranking-left {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 2px;
 }
 
@@ -1326,8 +1326,13 @@ a {
 }
 
 .ranking-meta {
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 10px;
+  background-color: #4a4c5536;
+  border-radius: 5px;
+  padding: 2px;
+  /* opacity: 0.2; */
+  /* color: var(--text-muted); */
+  color: #b6b6b6;
 }
 
 .ranking-right {
@@ -1654,3 +1659,127 @@ a {
 /* .nav-logout-btn:hover {
   background: linear-gradient(135deg, #f31f1f, #ec3c1d);
 }  */
+
+/* stânga itemului: logo + text */
+
+.ranking-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ranking-text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* logo real */
+.ranking-logo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.9),
+              0 0 0 1px rgba(148, 163, 184, 0.4);
+}
+
+/* placeholder (când nu ai logo) */
+.ranking-logo.placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0, #4ade80, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.9),
+              0 0 0 1px rgba(74, 222, 128, 0.6);
+}
+
+.ranking-logo.placeholder span {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ecfdf5;
+}
+
+.ranking-footer {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ranking-view-all-link {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  opacity: 0.9;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(129, 140, 248, 0.5);
+  background: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+}
+
+.ranking-view-all-link:hover {
+  opacity: 1;
+  background: radial-gradient(circle at top left, rgba(129, 140, 248, 0.3), transparent 55%);
+  transform: translateY(-1px);
+}
+
+/* container stânga: header + meta */
+
+.ranking-left {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  
+}
+
+/* rândul principal: #pozitie + logo + nume */
+
+.ranking-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* dacă ecranul e îngust, se rupe frumos pe 2 rânduri */
+}
+
+.ranking-position {
+  font-weight: 600;
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+/* logo inline */
+
+.ranking-logo-inline {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: inline-block;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.9),
+              0 0 0 1px rgba(148, 163, 184, 0.5);
+}
+
+/* placeholder (când nu ai logo) – bulină cu literă */
+
+.ranking-logo-inline.placeholder {
+  background: radial-gradient(circle at 30% 0, #4ade80, #16a34a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ecfdf5;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* numele ligii separat, ca să îl poți stiliza ușor */
+
+.ranking-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #f9fafb;
+}

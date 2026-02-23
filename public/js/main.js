@@ -29,26 +29,21 @@ function showVoteToast(message, isError = false) {
 }
 
 // încarcă lista cu ligile din /api/leagues/ranking
-async function loadRanking() {
-  try {
-    const res = await fetch("/api/leagues/ranking");
-    if (!res.ok) {
-      console.error("Failed to fetch ranking", res.status);
-      return;
-    }
+async function loadRanking(options = {}) {
+  const { full = false, containerId = "ranking-list" } = options;
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
+  container.innerHTML = "Loading...";
+
+  try {
+    const url = full ? "/api/leagues/ranking/full" : "/api/leagues/ranking";
+    const res = await fetch(url);
     const leagues = await res.json();
-    const container = document.getElementById("ranking-list");
-    if (!container) {
-      // dacă suntem pe o pagină fără ranking (ex: europe.html), ieșim
-      return;
-    }
 
     container.innerHTML = "";
-
-    if (leagues.length === 0) {
-      container.innerHTML =
-        '<p class="ranking-subtitle">No leagues available yet.</p>';
+    if (!leagues.length) {
+      container.innerHTML = "<p>No leagues yet.</p>";
       return;
     }
 
@@ -58,20 +53,34 @@ async function loadRanking() {
       const item = document.createElement("article");
       item.className = "ranking-item";
 
+      const logoHtml = league.logo_url
+        ? `<div class="ranking-logo">
+             <img src="${league.logo_url}" alt="${league.name} logo">
+           </div>`
+        : `<div class="ranking-logo placeholder">
+             <span>${(league.name || "?").charAt(0)}</span>
+           </div>`;
+
+      const logoInline = league.logo_url
+  ? `<img class="ranking-logo-inline" src="${league.logo_url}" alt="${league.name} logo">`
+  : `<span class="ranking-logo-inline placeholder">${(league.name || "?").charAt(0)}</span>`;
+
 item.innerHTML = `
   <div class="ranking-left">
-    <div class="ranking-pos-name">
-      #${index + 1} · ${league.name}
+    <div class="ranking-header-row">
+      <span class="ranking-position">#${index + 1}</span>
+      ${logoInline}
+      <span class="ranking-name">${league.name}</span>
     </div>
     <div class="ranking-meta">
-      Region: ${league.region || "N/A"} · Map: ${league.map_name || "N/A"}
+      ${league.region || "N/A"}
     </div>
   </div>
 
   <div class="ranking-right">
     <button class="ranking-vote-btn" data-league-id="${league.id}">
       <span class="vote-icon">
-        <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
           <path d="M2 21h4V9H2v12zm20-11c0-1.1-.9-2-2-2h-6l1-5-7 7v11h9c.8 0 1.5-.5 1.8-1.2l3-7.1c.1-.2.2-.5.2-.7v-2z"/>
         </svg>
       </span>
@@ -79,10 +88,11 @@ item.innerHTML = `
     </button>
   </div>
 `;
+
       container.appendChild(item);
     });
 
-    // atașăm evenimentul de click pentru toate butoanele Vote
+    // reatașezi event listeners pentru vote
     container.querySelectorAll(".ranking-vote-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         const leagueId = btn.getAttribute("data-league-id");
@@ -90,7 +100,8 @@ item.innerHTML = `
       });
     });
   } catch (err) {
-    console.error("Ranking error:", err);
+    console.error("Error loading ranking:", err);
+    container.innerHTML = "<p>Could not load ranking.</p>";
   }
 }
 
@@ -239,6 +250,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔹 Apelăm ranking-ul DOAR dacă există secțiunea (pe index.html)
   loadRanking();
+
+  // top 5 pe homepage (dacă există container-ul)
+  const homeRanking = document.getElementById("ranking-list");
+  if (homeRanking) {
+    loadRanking(); // folosește endpoint-ul LIMIT 5
+  }
+
+  // full ranking pe ranking.html
+  const fullRanking = document.getElementById("ranking-list-full");
+  if (fullRanking) {
+    loadRanking({ full: true, containerId: "ranking-list-full" });
+  }
 
   // LOGIN PAGE (username + password)
   const loginForm = document.getElementById("login-form");
