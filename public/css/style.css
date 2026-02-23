@@ -1272,6 +1272,27 @@ a {
   );
 }
 
+.sidebar-divider-left {
+  height: 1px;
+  width: 100%;
+  position: relative;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.sidebar-divider-left::before {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: 0 24px; /* nu atinge marginile */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.5),
+    transparent
+  );
+}
+
 /* al doilea card (Top leagues today) – lipit de primul, cu linie fină între ele */
 
 

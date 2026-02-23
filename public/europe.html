@@ -17,50 +17,67 @@
   </head>
   <body>
     <!-- NAVBAR -->
+    <div id="vote-toast" class="vote-toast"></div>
+    <!-- NAVBAR -->
     <header class="navbar-wrapper">
       <div class="container">
         <div class="navbar">
           <!-- LEFT: ONLY LOGO -->
           <div class="nav-left">
-            <a
-              href="index.html"
-              class="logo-only"
-              aria-label="World of Haxball - Home"
-            >
+            <a href="index.html" class="logo-only">
               <img
-                src="assets/logo.png"
+                src="assets/logo3.png"
                 alt="World of Haxball Logo"
                 class="logo"
               />
             </a>
+
+            <span class="beta-badge">BETA v1.0</span>
           </div>
 
           <!-- RIGHT: NAV LINKS -->
           <nav class="nav-right" aria-label="Main navigation">
             <ul class="nav-links" id="nav-links">
-              <li><a href="index.html" class="nav-link">Home</a></li>
-
+              <li>
+                <a href="index.html" class="nav-link nav-link-active">Home</a>
+              </li>
               <li class="nav-item-dropdown">
-                <a href="#" class="nav-link dropdown-toggle nav-link-active">
+                <a href="#" class="nav-link dropdown-toggle">
                   Competitions
                   <span class="dropdown-arrow"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="europe.html">Europe</a></li>
-                  <li><a href="na.html">North America</a></li>
-                  <li><a href="sa.html">South America</a></li>
-                  <li><a href="asia.html">Asia</a></li>
-                  <li><a href="turkey.html">Turkey</a></li>
+                  <li>
+                    <a href="europe.html" class="dropdown-item">Europe</a>
+                  </li>
+                  <li>
+                    <a href="na.html" class="dropdown-item">North America</a>
+                  </li>
+                  <li><a href="asia.html" class="dropdown-item">Asia</a></li>
+                  <li><a href="#" class="dropdown-item">Turkey</a></li>
                 </ul>
               </li>
+              <li><a href="#" class="nav-link">Tournaments</a></li>
 
-              <li><a href="#" class="nav-link">Leaderboards</a></li>
-              <li><a href="#" class="nav-link">Teams</a></li>
-              <li><a href="#" class="btn-primary">Login</a></li>
+              <!-- buton LOGIN -->
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+
+              <li id="nav-user" class="nav-user">
+                <span class="nav-user-name" id="nav-username"></span>
+                <button
+                  type="button"
+                  class="nav-logout-btn"
+                  id="nav-logout-btn"
+                >
+                  LOGOUT
+                </button>
+              </li>
             </ul>
           </nav>
 
-          <!-- MOBILE TOGGLE -->
+          <!-- MOBILE TOGGLE (fixed on the right) -->
           <button
             class="menu-toggle"
             id="mobile-menu"
