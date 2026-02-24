@@ -156,6 +156,7 @@ app.get('/api/auth/me', authRequired, async (req, res) => {
 //              LEAGUE RANKING
 // =========================================
 
+// Top 5 – ALL-TIME votes (nu se mai resetează zilnic)
 app.get("/api/leagues/ranking", async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -171,7 +172,6 @@ app.get("/api/leagues/ranking", async (req, res) => {
       FROM leagues l
       LEFT JOIN league_votes v 
         ON v.league_id = l.id
-        AND DATE(v.vote_date) = CURDATE()
       GROUP BY l.id
       ORDER BY votes_today DESC, l.created_at DESC
       LIMIT 5
@@ -182,6 +182,34 @@ app.get("/api/leagues/ranking", async (req, res) => {
   } catch (err) {
     console.error("Error loading ranking:", err);
     res.status(500).json({ message: "Error loading ranking" });
+  }
+});
+
+// Full ranking – ALL-TIME votes
+app.get("/api/leagues/ranking/full", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        l.id,
+        l.name,
+        l.region,
+        l.map_name,
+        l.discord_link,
+        l.logo_url,
+        COALESCE(COUNT(v.id), 0) AS votes_today
+      FROM leagues l
+      LEFT JOIN league_votes v 
+        ON v.league_id = l.id
+      GROUP BY l.id
+      ORDER BY votes_today DESC, l.created_at DESC
+      `
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error loading full ranking:", err);
+    res.status(500).json({ message: "Error loading full ranking" });
   }
 });
 
