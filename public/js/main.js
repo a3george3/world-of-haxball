@@ -635,6 +635,37 @@ function setupReplyForm() {
   });
 }
 
+function initProsettingsTable() {
+  const table = document.querySelector(".player-settings");
+  if (!table) return; // nu suntem pe prosettings.html
+
+  const rows = Array.from(table.querySelectorAll("tr.player-row"));
+
+  rows.forEach((row) => {
+    const btn = row.querySelector(".toggle-details");
+    if (!btn) return;
+
+    const detailsRow = row.nextElementSibling;
+    // ne asigurăm că următorul rând e chiar .player-details
+    if (!detailsRow || !detailsRow.classList.contains("player-details")) return;
+
+    // ascundem by default (în caz că nu e ascuns din CSS)
+    detailsRow.style.display = "none";
+
+    btn.addEventListener("click", () => {
+      const isOpen = detailsRow.style.display === "table-row";
+
+      if (isOpen) {
+        detailsRow.style.display = "none";
+        btn.textContent = "+";   // închis
+      } else {
+        detailsRow.style.display = "table-row";
+        btn.textContent = "−";   // deschis
+      }
+    });
+  });
+}
+
 // =========================================
 //  CODUL TĂU EXISTENT + AUTH PAGES
 // =========================================
@@ -844,4 +875,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // verificăm dacă userul e logat când se încarcă pagina
   checkAuthStatus();
+
+  initProsettingsTable();
 });

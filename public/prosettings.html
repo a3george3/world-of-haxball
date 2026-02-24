@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/assets/logo3.png" />
+    <title>World of Haxball</title>
+
+    <!-- Modern font for clean UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="vote-toast" class="vote-toast"></div>
+    <!-- NAVBAR -->
+    <header class="navbar-wrapper">
+      <div class="container">
+        <div class="navbar">
+          <!-- LEFT: ONLY LOGO -->
+          <div class="nav-left">
+            <a href="index.html" class="logo-only">
+              <img
+                src="assets/logo3.png"
+                alt="World of Haxball Logo"
+                class="logo"
+              />
+            </a>
+
+            <span class="beta-badge">BETA v1.0</span>
+          </div>
+
+          <!-- RIGHT: NAV LINKS -->
+          <nav class="nav-right" aria-label="Main navigation">
+            <ul class="nav-links" id="nav-links">
+              <li>
+                <a href="index.html" class="nav-link nav-link-active">Home</a>
+              </li>
+              <li class="nav-item-dropdown">
+                <a href="#" class="nav-link dropdown-toggle">
+                  Competitions
+                  <span class="dropdown-arrow"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="europe.html" class="dropdown-item">Europe</a>
+                  </li>
+                  <li>
+                    <a href="na.html" class="dropdown-item">North America</a>
+                  </li>
+                  <li><a href="asia.html" class="dropdown-item">Asia</a></li>
+                  <li><a href="#" class="dropdown-item">Turkey</a></li>
+                </ul>
+              </li>
+              <li><a href="forum.html" class="nav-link">Forum</a></li>
+              <li><a href="prosettings.html" class="nav-link">Pro Settings</a></li>
+
+              <!-- buton LOGIN -->
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+
+              <li id="nav-user" class="nav-user">
+                <span class="nav-user-name" id="nav-username"></span>
+                <button
+                  type="button"
+                  class="nav-logout-btn"
+                  id="nav-logout-btn"
+                >
+                  LOGOUT
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <!-- MOBILE TOGGLE (fixed on the right) -->
+          <button
+            class="menu-toggle"
+            id="mobile-menu"
+            aria-label="Toggle navigation"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="prosettings-main">
+      <!-- HERO SECTION (titlu + text + imagine dreapta) -->
+      <section class="prosettings-hero">
+        <h1 class="prosettings-title">Haxball Pro Settings and Gear List</h1>
+
+        <div class="prosettings-info">
+          <div class="div-text">
+            <p>
+              Welcome to our HaxBall Pro Settings and Gear List. This is where we
+              get our data to give you our analysis of the most used gaming
+              peripherals and gear and our competitive settings guide. We research
+              everything we can find, from settings like Haxball Zoom &amp; Browser
+              Zoom, extrapolation, low latency and resolution to gear like monitors
+              and keyboards.
+            </p>
+            <p>
+              Maybe you don’t want to know what the average resolution of
+              professional players is, but are much more interested in what
+              sensitivity your favorite HaxBall pros like
+              <a href="/profile.html?id=82" class="favplayer">^aMp^, </a>
+              <a href="/profile.html?id=76" class="favplayer">Kyo, </a>
+              <a href="/profile.html?id=24" class="favplayer">Al1s, </a>
+              <a href="/profile.html?id=21" class="favplayer">Bachira, </a>
+              <a href="/profile.html?id=88" class="favplayer">nik, </a>
+              <a href="/profile.html?id=1" class="favplayer">Hakut, </a>
+              <a href="/profile.html?id=106" class="favplayer">modric, </a>
+              <a href="/profile.html?id=19" class="favplayer">Enzo, </a> or
+              <a href="/profile.html?id=96" class="favplayer">supermazhine </a>are
+              using. In that case, you’ve come to the right place. We have all the
+              top teams in competitive HaxBall and listed them in the list below.
+              When applicable, you can click on a player’s name in order to see more
+              detailed data on the player (stuff like their Haxball goals, assists,
+              team history and so on).
+            </p>
+            <p>
+              The list you see below is connected to our database where we update
+              the information as soon as possible. If we made any mistakes or you
+              see any outdated information, please feel free to join us in the
+              comments to discuss these settings and their sources.
+            </p>
+          </div>
+
+          <div class="settings-img">
+            <!-- Poți păstra imaginea ta sau o poți schimba cu ce vrei -->
+            <img src="assets/settings.png" alt="Pro Settings" />
+          </div>
+        </div>
+      </section>
+
+      <!-- TABLE SECTION (card alb cu tabel) -->
+      <section class="prosettings-table-section">
+        <div class="table-container">
+          <table class="player-settings">
+            <!-- aici la <thead> + <tbody> păstrezi EXACT conținutul tău existent -->
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Position</th>
+              </tr>
+            </thead>
+             <tbody>
+          <!-- Row pentru jucătorul 1 -->
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=1" class="player-link">
+                <img src="assets/romania.png" alt="Player 1 Flag" />
+                <span>Hakut</span>
+              </a>
+            </td>
+            <td>DM/ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> Logitech G PRO X</p>
+              <p><span class="detail">Monitor:</span> ALIENWARE 240Hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 205</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=24" class="player-link">
+                <img src="assets/romania.png" alt="Player 1 Flag" />
+                <span>AL1s</span>
+              </a>
+            </td>
+            <td>AM/ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> Logitech G PRO</p>
+              <p><span class="detail">Monitor:</span> DELL S2721HGF 144HZ</p>
+              <p><span class="detail">Browser</span> Brave v 1.0.0</p>
+              <p><span class="detail">Browser Zoom:</span> 110%</p>
+              <p><span class="detail">Game Zoom:</span> 1.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1280x1024</p>
+              <p><span class="detail">Extrapolation:</span> 105</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=82" class="player-link">
+                <img src="assets/romania.png" alt="Player 1 Flag" />
+                <span>^aMp^</span>
+              </a>
+            </td>
+            <td>DM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> Razer BlackWidow V3
+                Tenkeyless
+              </p>
+              <p>
+                <span class="detail">Monitor:</span> MSI MPG ARTYMIS 273CQRDE
+                Curved Gaming Monitor 144HZ
+              </p>
+              <p><span class="detail">Browser</span> brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 175%</p>
+              <p><span class="detail">Game Zoom:</span> 1.75x</p>
+              <p><span class="detail">Desktop Resolution:</span> 2560 x 1440</p>
+              <p><span class="detail">Extrapolation:</span> 98</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=106" class="player-link">
+                <img src="assets/romania.png" alt="Player 1 Flag" />
+                <span>modric</span>
+              </a>
+            </td>
+            <td>GK/AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> Lenovo Legion Keyboard
+              </p>
+              <p><span class="detail">Monitor:</span> AOC 144HZ</p>
+              <p><span class="detail">Browser</span> brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 1.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920 x 1080</p>
+              <p><span class="detail">Extrapolation:</span> 80-100</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=12" class="player-link">
+                <img src="assets/romania.png" alt="Player 1 Flag" />
+                <span>lewa</span>
+              </a>
+            </td>
+            <td>ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> Razer Ornata V3 Gaming
+              </p>
+              <p><span class="detail">Monitor:</span> AOC 144Hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 1.75x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 160</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=21" class="player-link">
+                <img src="assets/poland.png" alt="Player 1 Flag" />
+                <span>BACHIRA</span>
+              </a>
+            </td>
+            <td>AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> apex pro tkl</p>
+              <p><span class="detail">Monitor:</span> ACER CURVED 144Hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 80%</p>
+              <p><span class="detail">Game Zoom:</span> 2x</p>
+              <p><span class="detail">Desktop Resolution:</span> 900x600</p>
+              <p><span class="detail">Extrapolation:</span> 100</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=" class="player-link">
+                <img src="assets/poland.png" alt="Player 1 Flag" />
+                <span>REL</span>
+              </a>
+            </td>
+            <td>DM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> Latenpow Looting L66</p>
+              <p><span class="detail">Monitor:</span> AOC 240Hz</p>
+              <p><span class="detail">Browser</span> Brave v 0.68.138</p>
+              <p><span class="detail">Browser Zoom:</span> 110%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 220</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=76" class="player-link">
+                <img src="assets/poland.png" alt="Player 1 Flag" />
+                <span>KYO</span>
+              </a>
+            </td>
+            <td>ST/DM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> Cooler Master Storm
+                Quickfire TK Cherry MX Blue
+              </p>
+              <p><span class="detail">Monitor:</span> BENQ ZOWIE 144Hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 80%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 900x600</p>
+              <p><span class="detail">Extrapolation:</span> 200</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=4" class="player-link">
+                <img src="assets/france.png" alt="Player 1 Flag" />
+                <span>Avr</span>
+              </a>
+            </td>
+            <td>AM/ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> apex pro tkl 2023</p>
+              <p><span class="detail">Monitor:</span> AOC 240 hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.11.96</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1366x768</p>
+              <p><span class="detail">Extrapolation:</span> 200</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+
+          <!-- Row pentru jucătorul 2 -->
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=19" class="player-link">
+                <img src="assets/italy.png" alt="Player 1 Flag" />
+                <span>ENZO</span>
+              </a>
+            </td>
+            <td>GK</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> Logitech G PRO TKL
+                Tastiera Gaming Meccanica
+              </p>
+              <p><span class="detail">Monitor:</span> ? 240Hz</p>
+              <p><span class="detail">Browser</span> Haxball Play App</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 125</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=96" class="player-link">
+                <img src="assets/israel.png" alt="Player 1 Flag" />
+                <span>supermazhine</span>
+              </a>
+            </td>
+            <td>AM/ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> logitech g413</p>
+              <p><span class="detail">Monitor:</span> asus 144 hz</p>
+              <p><span class="detail">Browser</span> brave 79.1.1</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2.25x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 95</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=" class="player-link">
+                <img src="assets/israel.png" alt="Player 1 Flag" />
+                <span>DEAN</span>
+              </a>
+            </td>
+            <td>AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> Logitech G512 SE</p>
+              <p><span class="detail">Monitor:</span> AOC G2460PF 144Hz</p>
+              <p><span class="detail">Browser</span> Torch 60.0.0.1508</p>
+              <p><span class="detail">Browser Zoom:</span> 150%</p>
+              <p><span class="detail">Game Zoom:</span> 2x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1440x900</p>
+              <p><span class="detail">Extrapolation:</span> 100</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=" class="player-link">
+                <img src="assets/turkey.png" alt="Player 1 Flag" />
+                <span>NORBIGO</span>
+              </a>
+            </td>
+            <td>GK</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> rampage kbr-96</p>
+              <p><span class="detail">Monitor:</span> asus 165 hz</p>
+              <p><span class="detail">Browser</span> brave v 71.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 110%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 45</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=22" class="player-link">
+                <img src="assets/turkey.png" alt="Player 1 Flag" />
+                <span>negan</span>
+              </a>
+            </td>
+            <td>DM/AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p>
+                <span class="detail">Keyboard:</span> SteelSeries Apex Pro Mini
+              </p>
+              <p>
+                <span class="detail">Monitor:</span> Samsung Odyssey G4 240 Hz
+              </p>
+              <p><span class="detail">Browser</span> Brave v 1.0.0</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 100</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=88" class="player-link">
+                <img src="assets/georgia.png" alt="Player 1 Flag" />
+                <span>nik</span>
+              </a>
+            </td>
+            <td>AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> laptop</p>
+              <p><span class="detail">Monitor:</span> laptop 144hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.1.21</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 1.75x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 140</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=105" class="player-link">
+                <img src="assets/netherlands.png" alt="Player 1 Flag" />
+                <span>Levitan</span>
+              </a>
+            </td>
+            <td>AM/ST</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> Razer Huntsman V3 Pro</p>
+              <p>
+                <span class="detail">Monitor:</span> Samsung LC27F398FWR - Full
+                HD VA 60Hz
+              </p>
+              <p><span class="detail">Browser</span> Brave 1.11.96</p>
+              <p><span class="detail">Browser Zoom:</span> 110%</p>
+              <p><span class="detail">Game Zoom:</span> 2.5x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 160</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+
+          <tr class="player-row">
+            <td>
+              <button class="toggle-details">+</button>
+            </td>
+            <td>
+              <a href="/profile.html?id=112" class="player-link">
+                <img src="assets/albania.png" alt="Player 1 Flag" />
+                <span>eR</span>
+              </a>
+            </td>
+            <td>DM/AM</td>
+          </tr>
+          <tr class="player-details">
+            <td colspan="3">
+              <p><span class="detail">Keyboard:</span> ?</p>
+              <p><span class="detail">Monitor:</span> AOC 240Hz</p>
+              <p><span class="detail">Browser</span> Brave v 1.11.96</p>
+              <p><span class="detail">Browser Zoom:</span> 100%</p>
+              <p><span class="detail">Game Zoom:</span> 2.25x</p>
+              <p><span class="detail">Desktop Resolution:</span> 1920x1080</p>
+              <p><span class="detail">Extrapolation:</span> 200</p>
+              <p><span class="detail">Low Latency:</span> NO</p>
+            </td>
+          </tr>
+        </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <!-- JS (mobile menu, etc.) -->
+    <script src="js/main.js"></script>
+  </body>
+</html>

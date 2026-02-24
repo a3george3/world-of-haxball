@@ -2445,3 +2445,248 @@ a {
     height: 20px;
   }
 }
+
+/* =========================================================
+   PROSETTINGS PAGE (dark clone)
+========================================================= */
+
+.prosettings-main {
+  max-width: 1400px;
+    box-shadow: var(--shadow-soft);
+    margin: 0px auto;
+    background: var(--bg-soft);
+    padding: 60px 50px;
+    border: 1px solid var(--border-subtle);
+  }
+
+
+
+/* HERO – titlu + text + imagine dreapta */
+
+.prosettings-hero {
+  margin-bottom: 36px;
+}
+
+.prosettings-title {
+  font-size: clamp(26px, 3vw, 32px);
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #f9fafb;
+}
+
+.prosettings-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.prosettings-info .div-text {
+  flex: 2;
+}
+
+.prosettings-info .div-text p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.prosettings-info .favplayer {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.prosettings-info .favplayer:hover {
+  text-decoration: underline;
+}
+
+/* blocul de imagine din dreapta (clonează dreptunghiul gri din screenshot) */
+
+.settings-img {
+  flex: 1.3;
+  min-width: 260px;
+  height: 230px;
+  border-radius: 18px;
+
+  background:
+    radial-gradient(circle at top left, rgba(148, 163, 184, 0.32), transparent 55%),
+    #020617;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.settings-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* =========================================================
+   TABLE SECTION
+========================================================= */
+
+.prosettings-table-section {
+  margin-top: 10px;
+}
+
+/* container pentru tabel, cu scroll orizontal pe mobil */
+
+.prosettings-table-section .table-container {
+  width: 100%;
+  margin-top: 16px;
+  border-radius: 18px;
+  background: #020617;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+  overflow-x: auto;
+}
+
+/* tabelul în sine */
+
+.player-settings {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 680px; /* seamănă cu tabelul larg din screenshot */
+}
+
+.player-settings thead {
+  background: #020617;
+}
+
+.player-settings thead th {
+  padding: 12px 18px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-align: left;
+  color: #9ca3af;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+/* rândurile jucătorilor (vizibile tot timpul) */
+
+.player-row td {
+  padding: 14px 18px; /* puțin mai mult spațiu */
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  background: #030712;
+  color: #e5e7eb;
+
+  vertical-align: middle; /* 👈 important */
+}
+
+/* alternare subtilă, ca să semene cu tabelul din screenshot */
+
+.player-row:nth-child(4n + 1) td,
+.player-row:nth-child(4n + 2) td {
+  background: #020617;
+}
+
+/* rândurile de detalii (se deschid la +) */
+
+.player-details {
+  display: none; /* JS-ul doar schimbă în table-row */
+}
+
+.player-details td {
+  padding: 12px 22px 14px;
+  background: #020617;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  font-size: 12px;
+  line-height: 1.6;
+  color: #d1d5db;
+}
+
+.player-details .detail {
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+/* butonul + (toggle) */
+
+.toggle-details {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: transparent;
+  color: #e5e7eb;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.toggle-details:hover {
+  background: rgba(139, 92, 246, 0.18);
+  color: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* nume + steag (Name col) */
+
+.player-link {
+  display: flex;              /* 👈 schimbăm din inline-flex */
+  align-items: center;        /* 👈 centrează vertical */
+  gap: 8px;
+
+  height: 100%;               /* 👈 ocupă toată înălțimea celulei */
+  text-decoration: none;
+  color: #f9fafb;
+  font-weight: 500;
+}
+
+.player-link img {
+  width: 18px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+}
+
+/* coloana Position */
+
+.player-settings td:nth-child(3) {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   RESPONSIVE PROSETTINGS
+========================================================= */
+
+@media (max-width: 992px) {
+  .prosettings-main {
+    padding: 28px 20px 40px;
+  }
+
+  .prosettings-info {
+    flex-direction: column;
+  }
+
+  .settings-img {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .player-settings {
+    min-width: 560px;
+  }
+}
