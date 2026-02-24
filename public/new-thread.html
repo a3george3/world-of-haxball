@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>World of Haxball – New Thread</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="thread-toast" class="thread-toast"></div>
+    <!-- NAVBAR (copiat din forum.html) -->
+    <header class="navbar-wrapper">
+      <div class="container">
+        <div class="navbar">
+          <div class="nav-left">
+            <a href="index.html" class="logo-only">
+              <img
+                src="assets/logo.png"
+                alt="World of Haxball Logo"
+                class="logo"
+              />
+            </a>
+          </div>
+
+          <nav class="nav-right">
+            <ul class="nav-links" id="nav-links">
+              <li><a href="index.html" class="nav-link">Home</a></li>
+              <li><a href="europe.html" class="nav-link">Competitions</a></li>
+              <li><a href="ranking.html" class="nav-link">Ranking</a></li>
+              <li>
+                <a href="forum.html" class="nav-link nav-link-active">Forum</a>
+              </li>
+
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+              <li id="nav-user" class="nav-user">
+                <span id="nav-username" class="nav-user-name"></span>
+                <button id="nav-logout-btn" class="nav-logout-btn">
+                  LOGOUT
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <button
+            class="menu-toggle"
+            id="mobile-menu"
+            aria-label="Toggle navigation"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGINA CU FORMULARUL -->
+    <main class="page-wrapper">
+      <section class="page-content">
+        <div class="container">
+          <section class="forum-main">
+            <header class="forum-header">
+              <h1>Create a new thread</h1>
+              <p class="forum-subtitle">
+                Start a fresh discussion in the World of Haxball community.
+              </p>
+            </header>
+
+            <div class="forum-card forum-card-full">
+              <p class="forum-help">
+                You need to be logged in to post a new thread.
+              </p>
+
+              <form id="new-thread-form" class="forum-form">
+                <div class="form-group">
+                  <label for="thread-title">Title</label>
+                  <input
+                    type="text"
+                    id="thread-title"
+                    name="title"
+                    placeholder="e.g. Ideas for next Futsal season"
+                    maxlength="50"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="thread-category">Category</label>
+                  <select id="thread-category" name="category">
+                    <option value="general">General</option>
+                    <option value="futsal">Futsal</option>
+                    <option value="big">BIG</option>
+                    <option value="rs">Real Soccer</option>
+                    <option value="offtopic">Off-topic</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="thread-content">Message</label>
+                  <textarea
+                    id="thread-content"
+                    name="content"
+                    rows="6"
+                    placeholder="Write your message here..."
+                    required
+                  ></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary forum-submit-btn">
+                  Post thread
+                </button>
+
+                <p id="forum-new-thread-message" class="form-message"></p>
+              </form>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

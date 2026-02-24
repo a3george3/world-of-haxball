@@ -249,15 +249,15 @@ a {
 /* ===== PAGE WRAPPER ===== */
 
 .page-wrapper {
-  padding: 60px 0 100px 0;
+  padding: 0px 0 100px 0;
 }
 
 .page-content {
-  width: 96%;
+  /* width: 96%; */
   max-width: 1400px;
   margin: 0 auto;
   background: var(--bg-soft);
-  border-radius: 14px;
+  /* border-radius: 14px; */
   padding: 60px 50px;
   box-shadow: var(--shadow-soft);
   border: 1px solid var(--border-subtle);
@@ -397,7 +397,7 @@ a {
 
 .league-section {
   margin-top: 32px;
-  padding-top: 24px;
+  padding-top: 5px;
   border-top: 1px solid rgba(255, 255, 255, 0.02);
 }
 
@@ -470,9 +470,9 @@ a {
 /* responsive tweaks */
 
 @media (max-width: 768px) {
-  .page-content {
+  /* .page-content {
     padding: 32px 20px;
-  }
+  } */
 
   .league-item {
     align-items: flex-start;
@@ -856,7 +856,7 @@ a {
   }
 
   .page-content {
-    padding: 40px 24px;
+    padding: 20px;
   }
 }
 
@@ -1278,6 +1278,27 @@ a {
   position: relative;
   margin-top: 50px;
   margin-bottom: 50px;
+}
+
+.sidebar-divider-left-updated {
+  height: 1px;
+  width: 100%;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar-divider-left-updated::before {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: 0 24px; /* nu atinge marginile */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(139, 92, 246, 0.5),
+    transparent
+  );
 }
 
 .sidebar-divider-left::before {
@@ -1803,4 +1824,623 @@ a {
   font-weight: 600;
   font-size: 13px;
   color: #f9fafb;
+}
+
+
+
+/* ===== FORUM: 2 coloane (liste + sidebar) ===== */
+
+.page-two-cols {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.forum-main {
+  flex: 3;
+}
+
+.forum-sidebar {
+  flex: 1.6;
+}
+
+/* mic styling pentru header-ul forumului */
+
+.forum-header h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.forum-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 520px;
+}
+
+.forum-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* =========================================================
+   FORUM – LISTA DE THREADS
+========================================================= */
+
+.forum-threads-list {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* fiecare postare = un card */
+
+.forum-thread-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 12px 16px;
+  border-radius: 14px;
+
+  background-color: #15161f;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.forum-thread-item:hover {
+  background-color: #181924;
+  border-color: rgba(139, 92, 246, 0.75);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+/* partea stângă: titlu + meta */
+
+.forum-thread-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.forum-thread-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 3px;
+}
+
+.forum-thread-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* partea dreaptă: numărul de replies */
+
+.forum-thread-stats {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 19px;
+  color: var(--text-muted);
+}
+
+.forum-thread-replies {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* emoji-ul 💬 (înlocuiește textul "replies") */
+.forum-thread-replies::before {
+  content: "💬";
+  font-size: 14px;
+}
+
+.discussion-button{
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+/* responsive – pe mobil coloanele se pun una sub alta */
+
+@media (max-width: 992px) {
+  .page-two-cols {
+    flex-direction: column;
+  }
+
+  .forum-thread-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .forum-thread-stats {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   THREAD TOAST (independent de vote-toast)
+========================================================= */
+
+.thread-toast {
+  position: fixed;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #ecfdf5;
+
+  box-shadow:
+    0 14px 30px rgba(22, 163, 74, 0.55),
+    0 0 0 1px rgba(187, 247, 208, 0.35);
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    top 0.35s ease,
+    opacity 0.35s ease;
+
+  z-index: 150;
+}
+
+.thread-toast.show {
+  top: 18px;
+  opacity: 1;
+}
+
+.thread-toast.error {
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+  box-shadow:
+    0 14px 30px rgba(248, 113, 113, 0.6),
+    0 0 0 1px rgba(254, 202, 202, 0.35);
+}
+
+
+/* ===== FORUM PAGINATION ===== */
+
+.forum-pagination {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.forum-page-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: #15161f;
+  color: #e5e7eb;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.forum-page-btn:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.forum-page-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.forum-page-info {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* === Forum threads: nu lăsa textul să iasă din card === */
+
+.forum-thread-item {
+  overflow: hidden;        /* de siguranță */
+}
+
+.forum-thread-main {
+  flex: 1;
+  min-width: 0;            /* permite textului să se rupă în interiorul flex-ului */
+}
+
+/* titlul și meta să poată rupe cuvintele foarte lungi */
+.forum-thread-title,
+.forum-thread-meta,
+.forum-thread-last {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ============================
+   Forum – Thread view: fix text overflow
+   ============================ */
+
+/* ca articolul de thread să nu „iasă” din container pe orizontală */
+.forum-thread-view {
+  /* max-width: 960px; */
+  margin: 32px auto 24px;
+  padding: 24px 28px;
+  /* border-radius: 18px;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.75); */
+}
+
+/* titlul thread-ului să se rupă corect chiar și la cuvinte foarte lungi */
+/* titlu + meta sus, fără „bubble” */
+.forum-thread-view .forum-header h1 {
+  font-size: 30px;
+  margin: 0 0 4px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* conținutul postării și al reply-urilor – rupem cuvintele foarte lungi */
+.thread-body,
+.thread-body p,
+.thread-reply,
+.thread-reply p {
+  white-space: normal;
+  word-wrap: break-word;     /* pentru browsere mai vechi */
+  overflow-wrap: anywhere;   /* pentru cele moderne */
+}
+
+/* ============================
+   THREAD PAGE – VIEW
+   ============================ */
+
+.forum-thread-view {
+  margin-bottom: 24px;
+  padding: 24px 28px;
+  border-radius: 18px;
+  /* background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8); */
+}
+
+/* header-ul din interiorul cardului */
+.forum-thread-view .forum-header {
+  margin-bottom: 12px;
+}
+
+/* postarea inițială – bloc separat, dar NU „bubble” de chat */
+.thread-body {
+  margin-top: 12px;
+  padding: 14px 0 18px;
+  border-top: 1px solid rgba(55, 65, 81, 0.8);
+  border-bottom: 1px solid rgba(55, 65, 81, 0.8);
+  
+  border-radius: 0;               /* și colțurile rotunjite de „balon” */
+}
+
+.thread-body p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+
+
+
+
+.thread-reply p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* card pentru formularul de reply */
+.forum-reply-section {
+  margin-top: 28px;
+  padding: 20px 24px;
+  border-radius: 18px;
+  background: #020617;
+  border: 1px solid rgba(129, 140, 248, 0.5);
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.8);
+}
+
+.forum-reply-section h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #e5e7eb;
+}
+
+/* formularul în sine */
+.forum-reply-section .forum-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forum-reply-section .form-group {
+  margin-bottom: 0;
+}
+
+/* textarea full-width, mai plăcut de folosit */
+.forum-reply-section textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* mesajele de eroare/succes */
+.forum-reply-section .form-message {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .forum-thread-view {
+    padding: 0px;
+  }
+
+  .thread-body {
+    padding: 14px 12px;
+  }
+
+  .thread-reply {
+    padding: 12px 12px;
+  }
+
+  .forum-reply-section {
+    padding: 18px 16px;
+  }
+  .forum-thread-view .forum-header h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+}
+
+.forum-thread-view .forum-header .forum-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* secțiunea de replies */
+
+.thread-replies {
+  margin-top: 20px;
+}
+
+.thread-replies > h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+/* fiecare reply = bloc separat, cu border sus, stil de forum */
+.thread-reply {
+  padding: 10px 0 30px;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  background: transparent;      /* scoatem fundalul plin */
+  border-radius: 0;
+}
+
+/* primul reply are linia de sus puțin mai evidentă */
+.thread-reply:first-of-type {
+  border-top-color: rgba(148, 163, 184, 0.7);
+}
+
+/* linia cu "Hakut • data" */
+.thread-reply-meta {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* textul reply-ului */
+.thread-reply p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.header-div{
+  padding: 20px 24px;
+    border-radius: 10px;
+    background: #2c2d35;
+    border: 1px solid rgba(129, 140, 248, 0.5);
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.8);
+}
+
+/* #thread-replies-list{
+  padding: 0px 5px;
+} */
+
+/* ===== Citat pentru reply (thread.html) ===== */
+
+/* ===== Citat pentru reply (thread.html) ===== */
+
+.reply-quote-box {
+  display: none;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  font-size: 12px;
+}
+
+/* pentru preview-ul din formular */
+.reply-quote-box.visible {
+  display: block;
+}
+
+/* pentru citatul din lista de replies */
+.reply-quote-box.inline-quote {
+  display: block;        /* AICI era lipsa */
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.reply-quote-author {
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: #e5e7eb;
+}
+
+.reply-quote-text {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* butonul "Reply" sub fiecare mesaj */
+.thread-reply-btn {
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: transparent;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.thread-reply-btn:hover {
+  background: rgba(129, 140, 248, 0.25);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.reply-quote-box.visible,
+.reply-quote-box.inline-quote {
+  display: block;
+}
+
+/* ============================
+   THREAD – Back to posts (premium)
+   ============================ */
+
+.thread-top-bar {
+  max-width: 960px;
+  margin: 24px auto 12px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.thread-back-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.thread-back-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: radial-gradient(
+    circle at 30% 0,
+    rgba(244, 244, 245, 0.8),
+    rgba(129, 140, 248, 0.95)
+  );
+  box-shadow: 0 6px 14px rgba(129, 140, 248, 0.7);
+}
+
+.thread-back-chevron {
+  font-size: 13px;
+  transform: translateX(0);
+  transition: transform 0.15s ease;
+}
+
+.thread-back-text {
+  white-space: nowrap;
+}
+
+/* Hover effects */
+.thread-back-link:hover {
+  background: rgba(129, 140, 248, 0.18);
+  border-color: rgba(129, 140, 248, 0.7);
+  color: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.95);
+}
+
+.thread-back-link:hover .thread-back-chevron {
+  transform: translateX(-2px);
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .thread-top-bar {
+    margin-top: 16px;
+    margin-bottom: 10px;
+  }
+
+  .thread-back-link {
+    padding: 6px 12px 6px 8px;
+    font-size: 12px;
+  }
+
+  .thread-back-icon {
+    width: 20px;
+    height: 20px;
+  }
 }

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>World of Haxball – Thread</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="thread-toast" class="thread-toast"></div>
+    <!-- poți copia exact navbar-ul din forum.html -->
+    <header class="navbar-wrapper">
+      <div class="container">
+        <div class="navbar">
+          <div class="nav-left">
+            <a href="index.html" class="logo-only">
+              <img
+                src="assets/logo.png"
+                alt="World of Haxball Logo"
+                class="logo"
+              />
+            </a>
+          </div>
+
+          <nav class="nav-right">
+            <ul class="nav-links" id="nav-links">
+              <li><a href="index.html" class="nav-link">Home</a></li>
+              <li><a href="europe.html" class="nav-link">Competitions</a></li>
+              <li><a href="ranking.html" class="nav-link">Ranking</a></li>
+              <li>
+                <a href="forum.html" class="nav-link nav-link-active">Forum</a>
+              </li>
+
+              <li id="nav-login-item">
+                <a href="login.html" class="btn-primary">Login</a>
+              </li>
+              <li id="nav-user" class="nav-user">
+                <span id="nav-username" class="nav-user-name"></span>
+                <button id="nav-logout-btn" class="nav-logout-btn">
+                  LOGOUT
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <button
+            class="menu-toggle"
+            id="mobile-menu"
+            aria-label="Toggle navigation"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-wrapper">
+      <section class="page-content">
+        <div class="container">
+           <!-- TOP BAR: back spre forum -->
+        <div class="thread-top-bar">
+          <a href="forum.html" class="thread-back-link">
+            <span class="thread-back-icon">
+              <span class="thread-back-chevron">←</span>
+            </span>
+            <span class="thread-back-text">Back to posts</span>
+          </a>
+        </div>
+          <article id="thread-view" class="forum-thread-view">
+            
+            <!-- thread + replies din JS -->
+          </article>
+
+          <div class="sidebar-divider-left"></div>
+
+          <!-- formular reply -->
+          <section class="forum-reply-section">
+            <h2>Reply</h2>
+            <!-- Citatul la care răspundem -->
+            <div id="reply-quote-box" class="reply-quote-box"></div>
+            <input type="hidden" id="reply-parent-id" />
+
+            <form id="reply-form" class="forum-form">
+              <div class="form-group">
+                <label for="reply-body">Message</label>
+                <textarea id="reply-body" rows="4" required></textarea>
+              </div>
+              <button type="submit" class="btn-primary forum-submit-btn">
+                Post reply
+              </button>
+              <p id="reply-message" class="form-message"></p>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

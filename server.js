@@ -1,18 +1,18 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const mysql = require('mysql2/promise');
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const mysql = require("mysql2/promise");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ====== POOL DB ======
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Servim frontend-ul din folderul public
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // ====== MIDDLEWARE: AUTENTIFICARE ======
 async function authRequired(req, res, next) {
@@ -31,16 +31,23 @@ async function authRequired(req, res, next) {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({ message: 'Not authenticated' });
+      return res.status(401).json({ message: "Not authenticated" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { id: ... }
     next();
   } catch (err) {
-    console.error('Auth error:', err.message);
-    return res.status(401).json({ message: 'Invalid token' });
+    console.error("Auth error:", err.message);
+    return res.status(401).json({ message: "Invalid token" });
   }
+}
+
+function adminRequired(req, res, next) {
+  if (!req.user || !req.user.is_admin) {
+    return res.status(403).json({ message: "Admin access required" });
+  }
+  next();
 }
 
 // ====== HELPER DB QUERY ======
@@ -54,101 +61,100 @@ async function query(sql, params) {
 // =========================================
 
 // REGISTER
-app.post('/api/auth/register', async (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required.' });
+      return res.status(400).json({ message: "All fields are required." });
     }
 
     const existing = await query(
-      'SELECT id FROM users WHERE email = ? OR username = ?',
-      [email, username]
+      "SELECT id FROM users WHERE email = ? OR username = ?",
+      [email, username],
     );
     if (existing.length > 0) {
-      return res.status(400).json({ message: 'User already exists.' });
+      return res.status(400).json({ message: "User already exists." });
     }
 
     const hashed = await bcrypt.hash(password, 10);
 
     await query(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashed]
+      "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+      [username, email, hashed],
     );
 
-    res.json({ message: 'User registered successfully.' });
+    res.json({ message: "User registered successfully." });
   } catch (err) {
-    console.error('Register error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    console.error("Register error:", err);
+    res.status(500).json({ message: "Server error." });
   }
 });
 
 // LOGIN
-app.post('/api/auth/login', async (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ message: 'All fields are required.' });
+      return res.status(400).json({ message: "All fields are required." });
     }
 
-    const users = await query(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
+    const users = await query("SELECT * FROM users WHERE username = ?", [
+      username,
+    ]);
 
     if (users.length === 0) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
     const user = users[0];
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
+      return res.status(400).json({ message: "Invalid credentials." });
     }
 
     const token = jwt.sign(
-      { id: user.id },
+      { id: user.id, is_admin: !!user.is_admin },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" },
     );
 
-    res.cookie('token', token, {
+    res.cookie("token", token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.json({ message: 'Logged in successfully.' });
+    res.json({ message: "Logged in successfully." });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error." });
   }
 });
 
 // LOGOUT
-app.post('/api/auth/logout', (req, res) => {
-  res.clearCookie('token');
-  res.json({ message: 'Logged out.' });
+app.post("/api/auth/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Logged out." });
 });
 
 // INFO USER CURENT
-app.get('/api/auth/me', authRequired, async (req, res) => {
+app.get("/api/auth/me", authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const users = await query(
-      'SELECT id, username, email, created_at FROM users WHERE id = ?',
-      [userId]
+      "SELECT id, username, email, is_admin, created_at FROM users WHERE id = ?",
+      [userId],
     );
     if (users.length === 0) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({ message: "User not found." });
     }
     res.json(users[0]);
   } catch (err) {
-    console.error('Me error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    console.error("Me error:", err);
+    res.status(500).json({ message: "Server error." });
   }
 });
 
@@ -175,7 +181,7 @@ app.get("/api/leagues/ranking", async (req, res) => {
       GROUP BY l.id
       ORDER BY votes_today DESC, l.created_at DESC
       LIMIT 5
-      `
+      `,
     );
 
     res.json(rows);
@@ -203,7 +209,7 @@ app.get("/api/leagues/ranking/full", async (req, res) => {
         ON v.league_id = l.id
       GROUP BY l.id
       ORDER BY votes_today DESC, l.created_at DESC
-      `
+      `,
     );
 
     res.json(rows);
@@ -232,7 +238,7 @@ app.get("/api/leagues/ranking/full", async (req, res) => {
         AND DATE(v.vote_date) = CURDATE()
       GROUP BY l.id
       ORDER BY votes_today DESC, l.created_at DESC
-      `
+      `,
     );
 
     res.json(rows);
@@ -246,50 +252,301 @@ app.get("/api/leagues/ranking/full", async (req, res) => {
 //              VOTARE LIGĂ
 // =========================================
 
-app.post('/api/leagues/:leagueId/vote', authRequired, async (req, res) => {
+app.post("/api/leagues/:leagueId/vote", authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const leagueId = parseInt(req.params.leagueId, 10);
 
     if (Number.isNaN(leagueId)) {
-      return res.status(400).json({ message: 'Invalid league id.' });
+      return res.status(400).json({ message: "Invalid league id." });
     }
 
-    const leagues = await query(
-      'SELECT id FROM leagues WHERE id = ?',
-      [leagueId]
-    );
+    const leagues = await query("SELECT id FROM leagues WHERE id = ?", [
+      leagueId,
+    ]);
     if (leagues.length === 0) {
-      return res.status(404).json({ message: 'League not found.' });
+      return res.status(404).json({ message: "League not found." });
     }
 
     try {
       await query(
-        'INSERT INTO league_votes (user_id, league_id, vote_date) VALUES (?, ?, CURDATE())',
-        [userId, leagueId]
+        "INSERT INTO league_votes (user_id, league_id, vote_date) VALUES (?, ?, CURDATE())",
+        [userId, leagueId],
       );
     } catch (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
+      if (err.code === "ER_DUP_ENTRY") {
         return res.status(400).json({
-          message: 'You already voted today. Come back tomorrow!'
+          message: "You already voted today. Come back tomorrow!",
         });
       }
       throw err;
     }
 
-    res.json({ message: 'Vote recorded successfully.' });
+    res.json({ message: "Vote recorded successfully." });
   } catch (err) {
-    console.error('Vote error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    console.error("Vote error:", err);
+    res.status(500).json({ message: "Server error." });
   }
 });
+
+// =========================================
+//              FORUM: THREADS
+// =========================================
+
+// GET /api/forum/threads  -> listă discuții (cu paginare)
+app.get("/api/forum/threads", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 15;
+
+    // protecție mică – nu lăsăm limit uriaș
+    const pageSize = Math.min(Math.max(limit, 1), 50);
+    const offset = (page - 1) * pageSize;
+
+    // total threads (fără join-uri)
+    const [countRows] = await pool.query(
+      "SELECT COUNT(*) AS total FROM forum_threads",
+    );
+    const total = countRows[0]?.total || 0;
+
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        t.id,
+        t.title,
+        t.body,
+        t.reply_count,
+        t.is_pinned,
+        t.is_locked,
+        t.created_at,
+        u.username AS author,
+        lr_info.last_reply_at,
+        lr.username AS last_reply_author
+      FROM forum_threads t
+      JOIN users u ON u.id = t.user_id
+      LEFT JOIN (
+        SELECT 
+          fr.thread_id,
+          fr.user_id,
+          fr.created_at AS last_reply_at
+        FROM forum_replies fr
+        INNER JOIN (
+          SELECT thread_id, MAX(created_at) AS max_created_at
+          FROM forum_replies
+          GROUP BY thread_id
+        ) frmax
+          ON fr.thread_id = frmax.thread_id
+         AND fr.created_at = frmax.max_created_at
+      ) AS lr_info
+        ON lr_info.thread_id = t.id
+      LEFT JOIN users lr
+        ON lr.id = lr_info.user_id
+      ORDER BY
+        t.is_pinned DESC,
+        COALESCE(lr_info.last_reply_at, t.created_at) DESC
+      LIMIT ? OFFSET ?
+      `,
+      [pageSize, offset],
+    );
+
+    res.json({
+      threads: rows,
+      total,
+      page,
+      pageSize,
+    });
+  } catch (err) {
+    console.error("Error loading forum threads:", err);
+    res.status(500).json({ message: "Error loading forum threads" });
+  }
+});
+
+// POST /api/forum/threads  -> creează un thread nou (doar logat)
+app.post("/api/forum/threads", authRequired, async (req, res) => {
+  const { title, body } = req.body;
+  const userId = req.user.id;
+
+  const cleanTitle = (title || "").trim();
+  const cleanBody = (body || "").trim();
+
+  if (!cleanTitle || !cleanBody) {
+    return res.status(400).json({ message: "Title and body are required" });
+  }
+
+  // 🔒 limită titlu: max 80 caractere
+  if (cleanTitle.length > 80) {
+    return res
+      .status(400)
+      .json({ message: "Title must be at most 80 characters." });
+  }
+
+  try {
+    const [result] = await pool.query(
+      `
+      INSERT INTO forum_threads (user_id, title, body)
+      VALUES (?, ?, ?)
+      `,
+      [userId, cleanTitle, cleanBody],
+    );
+
+    res.status(201).json({
+      ok: true,
+      id: result.insertId,
+      message: "Thread created successfully",
+    });
+  } catch (err) {
+    console.error("Error creating thread:", err);
+    res.status(500).json({ message: "Error creating thread" });
+  }
+});
+
+// GET /api/forum/threads/:id  -> un thread + reply-urile lui
+app.get("/api/forum/threads/:id", async (req, res) => {
+  const threadId = req.params.id;
+
+  try {
+    const [threads] = await pool.query(
+      `
+      SELECT 
+        t.id,
+        t.title,
+        t.body,
+        t.reply_count,
+        t.is_pinned,
+        t.is_locked,
+        t.created_at,
+        u.username AS author
+      FROM forum_threads t
+      JOIN users u ON u.id = t.user_id
+      WHERE t.id = ?
+      `,
+      [threadId],
+    );
+
+    if (threads.length === 0) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+
+    const [replies] = await pool.query(
+      `
+      SELECT 
+        r.id,
+        r.body,
+        r.created_at,
+        r.parent_reply_id,
+        u.username AS author,
+        pr.id AS parent_id,
+        pr.body AS parent_body,
+        up.username AS parent_author
+      FROM forum_replies r
+      JOIN users u ON u.id = r.user_id
+      LEFT JOIN forum_replies pr
+        ON pr.id = r.parent_reply_id
+      LEFT JOIN users up
+        ON up.id = pr.user_id
+      WHERE r.thread_id = ?
+      ORDER BY r.created_at ASC
+      `,
+      [threadId],
+    );
+
+    res.json({
+      thread: threads[0],
+      replies,
+    });
+  } catch (err) {
+    console.error("Error loading thread:", err);
+    res.status(500).json({ message: "Error loading thread" });
+  }
+});
+
+// POST /api/forum/threads/:id/replies  -> adaugă reply (doar logat)
+app.post("/api/forum/threads/:id/replies", authRequired, async (req, res) => {
+  const threadId = req.params.id;
+  const userId = req.user.id;
+  const { body, parentReplyId } = req.body;
+
+  const cleanBody = (body || "").trim();
+  if (!cleanBody) {
+    return res.status(400).json({ message: "Reply body is required" });
+  }
+
+  // parentReplyId este opțional
+  const parentId =
+    parentReplyId && !Number.isNaN(Number(parentReplyId))
+      ? Number(parentReplyId)
+      : null;
+
+  try {
+    const [threads] = await pool.query(
+      `SELECT id, is_locked FROM forum_threads WHERE id = ?`,
+      [threadId],
+    );
+    if (threads.length === 0) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+    if (threads[0].is_locked) {
+      return res.status(403).json({ message: "Thread is locked" });
+    }
+
+    await pool.query(
+      `
+      INSERT INTO forum_replies (thread_id, parent_reply_id, user_id, body)
+      VALUES (?, ?, ?, ?)
+      `,
+      [threadId, parentId, userId, cleanBody],
+    );
+
+    await pool.query(
+      `
+      UPDATE forum_threads
+      SET reply_count = reply_count + 1,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+      `,
+      [threadId],
+    );
+
+    res.status(201).json({ ok: true, message: "Reply added successfully" });
+  } catch (err) {
+    console.error("Error adding reply:", err);
+    res.status(500).json({ message: "Error adding reply" });
+  }
+});
+
+// DELETE /api/forum/threads/:id  -> doar ADMIN
+app.delete(
+  "/api/forum/threads/:id",
+  authRequired,
+  adminRequired,
+  async (req, res) => {
+    const threadId = req.params.id;
+
+    try {
+      const [result] = await pool.query(
+        `DELETE FROM forum_threads WHERE id = ?`,
+        [threadId],
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Thread not found" });
+      }
+
+      // replies se șterg automat (ON DELETE CASCADE)
+      res.json({ ok: true, message: "Thread deleted successfully" });
+    } catch (err) {
+      console.error("Error deleting thread:", err);
+      res.status(500).json({ message: "Error deleting thread" });
+    }
+  },
+);
 
 // =========================================
 //   FALLBACK: trimitem index.html pentru /
 // =========================================
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // =========================================

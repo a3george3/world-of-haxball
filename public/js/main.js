@@ -28,6 +28,36 @@ function showVoteToast(message, isError = false) {
   }, 2500);
 }
 
+// =========================================
+// THREAD TOAST (independent)
+// =========================================
+
+let threadToastTimer = null;
+
+function showThreadToast(message, isError = false) {
+  const toast = document.getElementById("thread-toast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.remove("show", "error");
+
+  if (isError) {
+    toast.classList.add("error");
+  }
+
+  void toast.offsetWidth;
+
+  toast.classList.add("show");
+
+  if (threadToastTimer) {
+    clearTimeout(threadToastTimer);
+  }
+
+  threadToastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
+
 // încarcă lista cu ligile din /api/leagues/ranking
 async function loadRanking(options = {}) {
   const { full = false, containerId = "ranking-list" } = options;
@@ -62,10 +92,10 @@ async function loadRanking(options = {}) {
            </div>`;
 
       const logoInline = league.logo_url
-  ? `<img class="ranking-logo-inline" src="${league.logo_url}" alt="${league.name} logo">`
-  : `<span class="ranking-logo-inline placeholder">${(league.name || "?").charAt(0)}</span>`;
+        ? `<img class="ranking-logo-inline" src="${league.logo_url}" alt="${league.name} logo">`
+        : `<span class="ranking-logo-inline placeholder">${(league.name || "?").charAt(0)}</span>`;
 
-item.innerHTML = `
+      item.innerHTML = `
   <div class="ranking-left">
     <div class="ranking-header-row">
       <span class="ranking-position">#${index + 1}</span>
@@ -167,6 +197,442 @@ function updateNavbarForUser(user) {
     navUser.style.display = "none";
     navUsername.textContent = "";
   }
+}
+
+// =========================================
+//  FORUM – LISTĂ THREADS + CREARE THREAD
+// =========================================
+
+// ===== Forum pagination state =====
+let forumCurrentPage = 1;
+const FORUM_PAGE_SIZE = 10;
+
+async function loadForumThreads(page = 1) {
+  const listEl = document.getElementById("forum-threads-list");
+  const countEl = document.getElementById("forum-threads-count");
+  const paginationEl = document.getElementById("forum-pagination");
+
+  if (!listEl) return; // nu suntem pe forum.html
+
+  forumCurrentPage = page;
+
+  try {
+    const res = await fetch(
+      `/api/forum/threads?page=${page}&limit=${FORUM_PAGE_SIZE}`,
+    );
+    if (!res.ok) {
+      console.error("Failed to load threads:", res.status);
+      listEl.innerHTML = "<p>Could not load threads.</p>";
+      if (paginationEl) paginationEl.innerHTML = "";
+      return;
+    }
+
+    const data = await res.json();
+    const threads = data.threads || [];
+    const total = data.total ?? threads.length;
+    const pageSize = data.pageSize || FORUM_PAGE_SIZE;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+    listEl.innerHTML = "";
+
+    if (!threads.length) {
+      listEl.innerHTML = "<p>No threads yet. Be the first to start one.</p>";
+      if (countEl) countEl.textContent = "0 threads";
+      if (paginationEl) paginationEl.innerHTML = "";
+      return;
+    }
+
+    threads.forEach((t) => {
+      const item = document.createElement("article");
+      item.className = "forum-thread-item";
+
+      const repliesCount = t.reply_count || 0;
+
+      const lastInfo = t.last_reply_author
+        ? `Last reply by ${t.last_reply_author}`
+        : "No replies yet";
+
+      item.innerHTML = `
+        <div class="forum-thread-main">
+          <h3 class="forum-thread-title">${t.title}</h3>
+          <div class="forum-thread-meta">
+            <span>by ${t.author}</span>
+            <span>• ${t.category || "general"}</span>
+            <span>• ${new Date(t.created_at).toLocaleString()}</span>
+            <span class="forum-thread-last">• ${lastInfo}</span>
+          </div>
+        </div>
+        <div class="forum-thread-stats">
+          <span class="forum-thread-replies">${repliesCount}</span>
+        </div>
+      `;
+
+      item.addEventListener("click", () => {
+        window.location.href = `thread.html?id=${t.id}`;
+      });
+
+      listEl.appendChild(item);
+    });
+
+    // textul cu numărul de threaduri – folosim TOTAL, nu doar pe pagină
+    if (countEl) {
+      countEl.textContent =
+        total === 1 ? "1 thread" : `${total} threads`;
+    }
+
+    // ----- Paginare (Prev / Next) -----
+    if (paginationEl) {
+      if (totalPages <= 1) {
+        paginationEl.innerHTML = "";
+      } else {
+        paginationEl.innerHTML = "";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "← Previous";
+        prevBtn.className = "forum-page-btn";
+        prevBtn.disabled = page <= 1;
+        prevBtn.addEventListener("click", () => {
+          if (page > 1) loadForumThreads(page - 1);
+        });
+
+        const infoSpan = document.createElement("span");
+        infoSpan.className = "forum-page-info";
+        infoSpan.textContent = `Page ${page} of ${totalPages}`;
+
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next →";
+        nextBtn.className = "forum-page-btn";
+        nextBtn.disabled = page >= totalPages;
+        nextBtn.addEventListener("click", () => {
+          if (page < totalPages) loadForumThreads(page + 1);
+        });
+
+        paginationEl.appendChild(prevBtn);
+        paginationEl.appendChild(infoSpan);
+        paginationEl.appendChild(nextBtn);
+      }
+    }
+  } catch (err) {
+    console.error("Forum threads error:", err);
+    listEl.innerHTML = "<p>Server error loading threads.</p>";
+    if (paginationEl) paginationEl.innerHTML = "";
+  }
+}
+
+function setupNewThreadForm() {
+  const form = document.getElementById("new-thread-form");
+  const msg = document.getElementById("forum-new-thread-message");
+  if (!form || !msg) return;
+
+   form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById("thread-title").value.trim();
+    const category = document.getElementById("thread-category").value;
+    const content = document.getElementById("thread-content").value.trim();
+
+    const MAX_TITLE_LEN = 80;
+
+    if (!title || !content) {
+      msg.textContent = "Please fill title and message.";
+      msg.classList.add("error");
+      return;
+    }
+
+    if (title.length > MAX_TITLE_LEN) {
+      msg.textContent = `Title must be at most ${MAX_TITLE_LEN} characters.`;
+      msg.classList.add("error");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/forum/threads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // înainte: body: JSON.stringify({ title, category, content }),
+        body: JSON.stringify({
+          title,
+          body: content, // <= AICI e cheia
+          category, // serverul o ignoră momentan, dar nu deranjează
+        }),
+      });
+
+      const data = await res.json();
+
+       if (!res.ok) {
+        const errorMessage =
+          res.status === 401
+            ? "You must be logged in to post."
+            : data.message || "Could not create thread.";
+
+        msg.textContent = errorMessage;
+        msg.classList.add("error");
+
+        // 🔔 toast roșu pentru eroare
+        showThreadToast(errorMessage, true);
+        return;
+      }
+
+      // ✅ succes
+      msg.textContent = "";
+      msg.classList.remove("error", "success");
+
+      form.reset();
+
+      // 🔔 toast verde care coboară de sus
+      showThreadToast("Thread posted successfully!");
+
+      // ⏩ redirect la pagina de forum după 1.5 secunde
+      setTimeout(() => {
+        window.location.href = "forum.html";
+      }, 1500);
+    } catch (err) {
+      console.error("New thread error:", err);
+      msg.textContent = "Server error.";
+      msg.classList.add("error");
+
+      // 🔔 toast roșu și pentru erori de server
+      showThreadToast("Server error.", true);
+    }
+  });
+}
+
+// =====================
+// FORMATĂRI TEXT (Markdown light)
+// =====================
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function renderFormattedText(raw) {
+  let safe = escapeHtml(raw);
+
+  // **bold**
+  safe = safe.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  // *italic*
+  safe = safe.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // link simplu: http:// sau https://
+  safe = safe.replace(
+    /(https?:\/\/[^\s]+)/g,
+    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+  );
+
+  // newline -> <br>
+  safe = safe.replace(/\n/g, "<br>");
+
+  return safe;
+}
+
+// =========================================
+//  FORUM – PAGINA UNUI SINGUR THREAD
+// =========================================
+
+
+async function loadThreadPage() {
+  const container = document.getElementById("thread-view");
+  if (!container) return; // nu suntem pe thread.html
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    container.innerHTML = "<p>Thread not found.</p>";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/forum/threads/${id}`);
+    if (!res.ok) {
+      container.innerHTML = "<p>Could not load thread.</p>";
+      return;
+    }
+
+    const data = await res.json();
+    const thread = data.thread;
+    const replies = data.replies || [];
+
+    container.innerHTML = `
+      <header class="forum-header">
+        <div class="header-div">
+          <h1>${thread.title}</h1>
+          <p class="forum-subtitle">
+            by ${thread.author} • ${thread.category || "general"} •
+            ${new Date(thread.created_at).toLocaleString()}
+          </p>
+
+          <div class="thread-body">
+            <p>${renderFormattedText(thread.body)}</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="thread-replies">
+        <h2>${replies.length} replies</h2>
+        <div id="thread-replies-list"></div>
+      </section>
+    `;
+
+    const repliesList = document.getElementById("thread-replies-list");
+    if (!repliesList) return;
+
+    if (replies.length === 0) {
+      repliesList.innerHTML = "<p>No replies yet.</p>";
+    } else {
+      repliesList.innerHTML = "";
+      replies.forEach((r) => {
+        const div = document.createElement("div");
+        div.className = "thread-reply";
+
+        // dacă e reply la alt reply, construim un mic citat
+        let quoteHtml = "";
+        if (r.parent_id && r.parent_body && r.parent_author) {
+          const parentSnippet =
+            r.parent_body.length > 120
+              ? r.parent_body.slice(0, 120) + "…"
+              : r.parent_body;
+
+          quoteHtml = `
+            <div class="reply-quote-box inline-quote">
+              <div class="reply-quote-author">Replying to ${r.parent_author}</div>
+              <div class="reply-quote-text">${renderFormattedText(parentSnippet)}</div>
+            </div>
+          `;
+        }
+
+        div.innerHTML = `
+          <div class="thread-reply-meta">
+            <span>${r.author}</span>
+            <span>• ${new Date(r.created_at).toLocaleString()}</span>
+          </div>
+          ${quoteHtml}
+          <p>${renderFormattedText(r.body)}</p>
+          <button
+            class="thread-reply-btn"
+            data-reply-id="${r.id}"
+            data-author="${r.author}"
+          >
+            Reply
+          </button>
+        `;
+        repliesList.appendChild(div);
+      });
+
+      // attach click pentru butoanele "Reply"
+      const quoteBox = document.getElementById("reply-quote-box");
+      const parentInput = document.getElementById("reply-parent-id");
+      const textarea = document.getElementById("reply-body");
+
+      document.querySelectorAll(".thread-reply-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (!quoteBox || !parentInput || !textarea) return;
+
+          const replyId = btn.dataset.replyId;
+          const author = btn.dataset.author || "user";
+
+          const bodyText =
+            btn.closest(".thread-reply").querySelector("p")?.textContent || "";
+          const snippet =
+            bodyText.length > 120 ? bodyText.slice(0, 120) + "…" : bodyText;
+
+          parentInput.value = replyId;
+          quoteBox.innerHTML = `
+            <div class="reply-quote-author">Replying to ${author}</div>
+            <div class="reply-quote-text">${renderFormattedText(snippet)}</div>
+          `;
+          quoteBox.classList.add("visible");
+
+          textarea.focus();
+        });
+      });
+    }
+  } catch (err) {
+    console.error("Thread page error:", err);
+    container.innerHTML = "<p>Server error.</p>";
+  }
+}
+
+function setupReplyForm() {
+  const form = document.getElementById("reply-form");
+  const msg = document.getElementById("reply-message");
+  if (!form || !msg) return; // nu suntem pe thread.html
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  const parentInput = document.getElementById("reply-parent-id");
+  const quoteBox = document.getElementById("reply-quote-box");
+  const textarea = document.getElementById("reply-body");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const body = textarea.value.trim();
+    if (!body) {
+      const errorMessage = "Reply cannot be empty.";
+      msg.textContent = errorMessage;
+      msg.classList.add("error");
+
+      showThreadToast(errorMessage, true);
+      return;
+    }
+
+    const parentReplyId = parentInput ? parentInput.value || null : null;
+
+    try {
+      const res = await fetch(`/api/forum/threads/${id}/replies`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body, parentReplyId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const errorMessage =
+          res.status === 401
+            ? "You must be logged in to reply."
+            : data.message || "Could not post reply.";
+
+        msg.textContent = errorMessage;
+        msg.classList.add("error");
+
+        showThreadToast(errorMessage, true);
+        return;
+      }
+
+      // succes
+      msg.textContent = "Reply posted.";
+      msg.classList.remove("error");
+      msg.classList.add("success");
+      form.reset();
+
+      // resetăm citatul
+      if (parentInput) parentInput.value = "";
+      if (quoteBox) {
+        quoteBox.innerHTML = "";
+        quoteBox.classList.remove("visible");
+      }
+
+      showThreadToast("Reply posted!");
+
+      // ⏩ redirect la forum după ~1.5 secunde
+      setTimeout(() => {
+        window.location.href = "forum.html";
+      }, 1500);
+    } catch (err) {
+      console.error("Reply error:", err);
+      msg.textContent = "Server error.";
+      msg.classList.add("error");
+
+      showThreadToast("Server error.", true);
+    }
+  });
 }
 
 // =========================================
@@ -347,6 +813,33 @@ document.addEventListener("DOMContentLoaded", () => {
       loadRanking();
       window.location.href = "index.html";
     });
+  }
+
+   // --- FORUM BUTTON "NEW THREAD" ---
+  const newThreadBtn = document.getElementById("forum-new-thread-btn");
+  if (newThreadBtn) {
+    newThreadBtn.addEventListener("click", () => {
+      window.location.href = "new-thread.html";
+    });
+  }
+
+  // --- FORUM PAGE: listă threads ---
+  const forumList = document.getElementById("forum-threads-list");
+  if (forumList) {
+    loadForumThreads();
+  }
+
+  // --- PAGINA / FORMULARUL DE NEW THREAD ---
+  const newThreadForm = document.getElementById("new-thread-form");
+  if (newThreadForm) {
+    setupNewThreadForm();
+  }
+
+  // --- THREAD PAGE (un singur thread) ---
+  const threadView = document.getElementById("thread-view");
+  if (threadView) {
+    loadThreadPage();
+    setupReplyForm();
   }
 
   // verificăm dacă userul e logat când se încarcă pagina
