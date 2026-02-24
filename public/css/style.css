@@ -2352,8 +2352,8 @@ a {
    ============================ */
 
 .thread-top-bar {
-  max-width: 960px;
-  margin: 24px auto 12px;
+  margin: 0px auto -20px;
+  padding: 0px 28px;
   display: flex;
   justify-content: flex-start;
 }
@@ -2432,6 +2432,7 @@ a {
   .thread-top-bar {
     margin-top: 16px;
     margin-bottom: 10px;
+    padding: 0px 0px;
   }
 
   .thread-back-link {
