@@ -607,15 +607,24 @@ app.get("/api/comparison/nik-levitan", async (req, res) => {
       },
     };
 
-    // calculăm scorul pe categorii: fiecare categorie câștigată = 1 punct
-    let nikScore = 0;
-    let levScore = 0;
+    // calculăm scorul ca TOTAL BULLET-URI pentru fiecare jucător
 
-    Object.values(cat).forEach((c) => {
-      if (c.nik > c.Levitan) nikScore += 1;
-      else if (c.Levitan > c.nik) levScore += 1;
-      // dacă e egalitate, nu primește nimeni punct
-    });
+// calculăm scorul ca TOTAL BULLET-URI pentru fiecare jucător
+    const toInt = (v) => Number(v) || 0;
+
+    const nikScore =
+      toInt(r.game_iq_nik) +
+      toInt(r.skill_nik) +
+      toInt(r.pos_nik) +
+      toInt(r.fin_nik) +
+      toInt(r.def_nik);
+
+    const levScore =
+      toInt(r.game_iq_levitan) +
+      toInt(r.skill_levitan) +
+      toInt(r.pos_levitan) +
+      toInt(r.fin_levitan) +
+      toInt(r.def_levitan);
 
     res.json({
       leftName: COMP_LEFT,

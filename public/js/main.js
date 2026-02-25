@@ -675,6 +675,7 @@ async function loadComparisonSummary() {
   const scoreLevEl = document.getElementById("cmp-lev-score");
   const totalVotesEl = document.getElementById("cmp-total-votes");
 
+  // dacă nu suntem pe pagina cu cardul, ieșim
   if (!scoreNikEl || !scoreLevEl || !totalVotesEl) return;
 
   try {
@@ -686,12 +687,74 @@ async function loadComparisonSummary() {
 
     const data = await res.json();
 
+    // scor general (cele 5 categorii -> 0–5 puncte)
     scoreNikEl.textContent = data.nikScore ?? 0;
     scoreLevEl.textContent = data.levScore ?? 0;
+
+    // total voturi
     totalVotesEl.textContent = data.totalVotes ?? 0;
+
+    // dacă ai în HTML și <span id="am-total-votes"> poți umple și acolo:
+    const totalExtra = document.getElementById("am-total-votes");
+    if (totalExtra) {
+      totalExtra.textContent = data.totalVotes ?? 0;
+    }
+
+    // umplem și detaliile pe categorii (dacă există panelul)
+    updateComparisonDetails(data);
   } catch (err) {
     console.error("Comparison summary fetch error:", err);
   }
+}
+
+function updateComparisonDetails(summary) {
+  const cats = summary && summary.categories;
+  if (!cats) return;
+
+  // dacă nu există panelul, nu facem nimic
+  const testEl = document.getElementById("am-gameiq-nik");
+  if (!testEl) return;
+
+  const mapping = [
+    { catKey: "game_iq",     nikId: "am-gameiq-nik",      levId: "am-gameiq-levitan" },
+    { catKey: "skill",       nikId: "am-skill-nik",       levId: "am-skill-levitan" },
+    { catKey: "positioning", nikId: "am-positioning-nik", levId: "am-positioning-levitan" },
+    { catKey: "finishing",   nikId: "am-finishing-nik",   levId: "am-finishing-levitan" },
+    { catKey: "defending",   nikId: "am-defending-nik",   levId: "am-defending-levitan" },
+  ];
+
+  mapping.forEach(({ catKey, nikId, levId }) => {
+    const cat = cats[catKey] || {};
+
+    // în JSON vine { nik: number, Levitan: number } (cu L mare)
+    const nikVal = cat.nik ?? 0;
+    const levVal = (cat.Levitan ?? cat.levitan ?? 0);
+
+    const nikEl = document.getElementById(nikId);
+    const levEl = document.getElementById(levId);
+
+    if (nikEl) nikEl.textContent = nikVal;
+    if (levEl) levEl.textContent = levVal;
+  });
+}
+
+function setupAmDetailsToggle() {
+  const btn = document.getElementById("am-details-toggle");
+  const panel = document.getElementById("am-details-panel");
+
+  if (!btn || !panel) return;
+
+  btn.addEventListener("click", () => {
+    panel.classList.toggle("am-details-panel-hidden");
+    btn.classList.toggle("am-details-toggle-open");
+    // Dacă vrei să schimbi și textul, decomentează:
+    // const label = btn.childNodes[0]; // primul text node
+    // if (label && label.nodeType === Node.TEXT_NODE) {
+    //   label.textContent = panel.classList.contains("am-details-panel-hidden")
+    //     ? "Extend vote details "
+    //     : "Hide vote details ";
+    // }
+  });
 }
 
 function setupComparisonVoting() {
@@ -771,6 +834,36 @@ function setupComparisonVoting() {
   // la load, aducem și sumarul
   loadComparisonSummary();
 }
+
+// function setupAmDetailsToggle() {
+//   const btn = document.getElementById("am-details-toggle");
+//   const panel = document.getElementById("am-details-panel");
+
+//   if (!btn || !panel) return;
+
+//   // containerul secțiunii de comparație (ca să-l ținem fix)
+//   const container =
+//     btn.closest(".comparison-inner") ||
+//     btn.closest(".comparison-section") ||
+//     document.body;
+
+//   btn.addEventListener("click", () => {
+//     // poziția verticală a secțiunii înainte de toggle
+//     const topBefore =
+//       container.getBoundingClientRect().top + window.scrollY;
+
+//     // deschidem / închidem panelul
+//     panel.classList.toggle("am-details-panel-hidden");
+//     btn.classList.toggle("am-details-toggle-open");
+
+//     // readucem secțiunea la aceeași poziție în viewport
+//     window.scrollTo({
+//       top: topBefore,
+//       left: window.scrollX,
+//       behavior: "instant" in window ? "instant" : "auto",
+//     });
+//   });
+// }
 
 // function initComparisonParticles() {
 //   const canvas = document.getElementById("comparison-particles");
@@ -1176,10 +1269,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // verificăm dacă userul e logat când se încarcă pagina
-  checkAuthStatus();
 
-  initProsettingsTable();
+  // initProsettingsTable();
   setupComparisonVoting()
   // initComparisonParticles();;
   initProsettingsTable();
+  setupAmDetailsToggle();
+  checkAuthStatus();
 });

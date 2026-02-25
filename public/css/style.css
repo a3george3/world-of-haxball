@@ -2976,3 +2976,102 @@ a {
   }
 }
 
+/* ===== AM COMPARISON – DETAILS TOGGLE ===== */
+
+.am-details-toggle {
+  margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* padding: 2px 7px; */
+    /* border-radius: 999px; */
+    border: none;
+    background: radial-gradient(circle at top left, rgba(129, 140, 248, 0.25), transparent 55%);
+    color: #a8a8a8;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.8), 0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.am-details-toggle:hover {
+  transform: translateY(-1px);
+  background: radial-gradient(circle at top left,
+              rgba(129, 140, 248, 0.35),
+              transparent 60%);
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(129, 140, 248, 0.4) inset;
+}
+
+.am-details-toggle-icon {
+  font-size: 10px;
+  transition: transform 0.18s ease;
+}
+
+/* rotim săgeata când panelul este deschis */
+.am-details-toggle-open .am-details-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Panoul de detalii */
+
+.am-details-panel {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: radial-gradient(circle at top left,
+              rgba(15, 23, 42, 0.85),
+              #020617 80%);
+  border: 1px solid rgba(37, 99, 235, 0.45);
+
+  font-size: 12px;
+  color: #cbd5f5;
+
+  max-height: 400px;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    max-height 0.25s ease;
+}
+
+.am-details-panel-hidden {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  padding-top: 0;
+  padding-bottom: 0;
+  border-width: 0;
+}
+
+/* rânduri în panel */
+
+.am-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.am-details-row + .am-details-row {
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.am-details-label {
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.am-details-values {
+  font-family: "Poppins", monospace;
+  color: #a5b4fc;
+}
