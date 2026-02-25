@@ -3,6 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <title>World of Haxball – Forum</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-2RX1R5K714"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-2RX1R5K714");
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,8 +71,9 @@
                 </ul>
               </li>
               <li><a href="forum.html" class="nav-link">Forum</a></li>
-              <li><a href="prosettings.html" class="nav-link">Pro Settings</a></li>
-              
+              <li>
+                <a href="prosettings.html" class="nav-link">Pro Settings</a>
+              </li>
 
               <!-- buton LOGIN -->
               <li id="nav-login-item">
