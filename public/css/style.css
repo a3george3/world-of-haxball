@@ -3075,3 +3075,14 @@ a {
   font-family: "Poppins", monospace;
   color: #a5b4fc;
 }
+
+.small-region{
+  font-size: 10px;
+    background-color: #4a4c5536;
+    border-radius: 5px;
+    padding: 2px;
+    /* opacity: 0.2; */
+    /* color: var(--text-muted); */
+    color: #b6b6b6;
+    margin-right: 5px;
+}
