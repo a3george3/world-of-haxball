@@ -542,6 +542,159 @@ app.delete(
 );
 
 // =========================================
+//      PLAYER COMPARISON: nik vs Levitan
+// =========================================
+
+const COMP_LEFT = "nik";
+const COMP_RIGHT = "Levitan";
+
+// GET /api/comparison/nik-levitan  -> sumar rezultate
+app.get("/api/comparison/nik-levitan", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT
+        COUNT(*) AS total_votes,
+        SUM(game_iq = ?)      AS game_iq_nik,
+        SUM(game_iq = ?)      AS game_iq_levitan,
+        SUM(skill = ?)        AS skill_nik,
+        SUM(skill = ?)        AS skill_levitan,
+        SUM(positioning = ?)  AS pos_nik,
+        SUM(positioning = ?)  AS pos_levitan,
+        SUM(finishing = ?)    AS fin_nik,
+        SUM(finishing = ?)    AS fin_levitan,
+        SUM(defending = ?)    AS def_nik,
+        SUM(defending = ?)    AS def_levitan
+      FROM comparison_votes
+      `,
+      [
+        COMP_LEFT,
+        COMP_RIGHT,
+        COMP_LEFT,
+        COMP_RIGHT,
+        COMP_LEFT,
+        COMP_RIGHT,
+        COMP_LEFT,
+        COMP_RIGHT,
+        COMP_LEFT,
+        COMP_RIGHT,
+      ],
+    );
+
+    const r = rows[0] || {};
+    const total = r.total_votes || 0;
+
+    const cat = {
+      game_iq: {
+        nik: r.game_iq_nik || 0,
+        Levitan: r.game_iq_levitan || 0,
+      },
+      skill: {
+        nik: r.skill_nik || 0,
+        Levitan: r.skill_levitan || 0,
+      },
+      positioning: {
+        nik: r.pos_nik || 0,
+        Levitan: r.pos_levitan || 0,
+      },
+      finishing: {
+        nik: r.fin_nik || 0,
+        Levitan: r.fin_levitan || 0,
+      },
+      defending: {
+        nik: r.def_nik || 0,
+        Levitan: r.def_levitan || 0,
+      },
+    };
+
+    // calculăm scorul pe categorii: fiecare categorie câștigată = 1 punct
+    let nikScore = 0;
+    let levScore = 0;
+
+    Object.values(cat).forEach((c) => {
+      if (c.nik > c.Levitan) nikScore += 1;
+      else if (c.Levitan > c.nik) levScore += 1;
+      // dacă e egalitate, nu primește nimeni punct
+    });
+
+    res.json({
+      leftName: COMP_LEFT,
+      rightName: COMP_RIGHT,
+      totalVotes: total,
+      categories: cat,
+      nikScore,
+      levScore,
+    });
+  } catch (err) {
+    console.error("Comparison summary error:", err);
+    res.status(500).json({ message: "Error loading comparison summary" });
+  }
+});
+
+// POST /api/comparison/nik-levitan/vote  -> doar logat, o singură dată
+app.post(
+  "/api/comparison/nik-levitan/vote",
+  authRequired,
+  async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const {
+        game_iq,
+        skill,
+        positioning,
+        finishing,
+        defending,
+      } = req.body || {};
+
+      const choices = { game_iq, skill, positioning, finishing, defending };
+
+      // verificăm că toate cele 5 sunt prezente
+      for (const [key, value] of Object.entries(choices)) {
+        if (!value) {
+          return res
+            .status(400)
+            .json({ message: `Please vote in ${key}.` });
+        }
+        if (value !== COMP_LEFT && value !== COMP_RIGHT) {
+          return res.status(400).json({ message: "Invalid vote value." });
+        }
+      }
+
+      try {
+        await pool.query(
+          `
+          INSERT INTO comparison_votes
+            (user_id, game_iq, skill, positioning, finishing, defending)
+          VALUES (?, ?, ?, ?, ?, ?)
+          `,
+          [
+            userId,
+            game_iq,
+            skill,
+            positioning,
+            finishing,
+            defending,
+          ],
+        );
+      } catch (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res
+            .status(400)
+            .json({ message: "You already voted in this comparison." });
+        }
+        throw err;
+      }
+
+      res.status(201).json({ message: "Vote recorded successfully." });
+    } catch (err) {
+      console.error("Comparison vote error:", err);
+      res.status(500).json({ message: "Server error while voting." });
+    }
+  },
+);
+
+
+// =========================================
 //   FALLBACK: trimitem index.html pentru /
 // =========================================
 

@@ -127,6 +127,173 @@
         <div class="layout-two-col">
           <!-- ========== LEFT: MAIN CONTENT (HERO) ========== -->
           <div class="layout-main">
+            <!-- ========== PLAYER COMPARISON: NIK vs LEVITAN ========== -->
+            <section class="comparison-section">
+              <div class="comparison-inner">
+                <div class="comparison-header">
+                  <p class="hero-kicker">PLAYER COMPARISON</p>
+                  <h2 class="comparison-title">nik vs Levitan</h2>
+                </div>
+
+                <div class="comparison-content">
+                  <div class="comparison-image">
+                    <img
+                      src="assets/nikvslevitan.png"
+                      alt="nik vs Levitan comparison"
+                    />
+                  </div>
+
+                  <div class="comparison-vote-card">
+                    <h3 class="comparison-subtitle">Community voting</h3>
+                    <p class="comparison-text">
+                      Vote who is better in each category. Your vote counts only
+                      if you complete all 5 fields. One vote per account.
+                    </p>
+
+                    <form id="comparison-form" class="comparison-form">
+                      <!-- Game IQ -->
+                      <div class="comparison-row">
+                        <span class="comparison-label">Game IQ</span>
+                        <div class="comparison-options">
+                          <label>
+                            <input
+                              type="radio"
+                              name="game_iq"
+                              value="nik"
+                              required
+                            />
+                            nik
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="game_iq"
+                              value="Levitan"
+                            />
+                            Levitan
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Skill -->
+                      <div class="comparison-row">
+                        <span class="comparison-label">Skill</span>
+                        <div class="comparison-options">
+                          <label>
+                            <input
+                              type="radio"
+                              name="skill"
+                              value="nik"
+                              required
+                            />
+                            nik
+                          </label>
+                          <label>
+                            <input type="radio" name="skill" value="Levitan" />
+                            Levitan
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Positioning -->
+                      <div class="comparison-row">
+                        <span class="comparison-label">Positioning</span>
+                        <div class="comparison-options">
+                          <label>
+                            <input
+                              type="radio"
+                              name="positioning"
+                              value="nik"
+                              required
+                            />
+                            nik
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="positioning"
+                              value="Levitan"
+                            />
+                            Levitan
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Finishing -->
+                      <div class="comparison-row">
+                        <span class="comparison-label">Finishing</span>
+                        <div class="comparison-options">
+                          <label>
+                            <input
+                              type="radio"
+                              name="finishing"
+                              value="nik"
+                              required
+                            />
+                            nik
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="finishing"
+                              value="Levitan"
+                            />
+                            Levitan
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Defending -->
+                      <div class="comparison-row">
+                        <span class="comparison-label">Defending</span>
+                        <div class="comparison-options">
+                          <label>
+                            <input
+                              type="radio"
+                              name="defending"
+                              value="nik"
+                              required
+                            />
+                            nik
+                          </label>
+                          <label>
+                            <input
+                              type="radio"
+                              name="defending"
+                              value="Levitan"
+                            />
+                            Levitan
+                          </label>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        class="btn-primary comparison-submit"
+                      >
+                        Submit your vote
+                      </button>
+
+                      <p id="comparison-message" class="form-message"></p>
+                    </form>
+
+                    <div class="comparison-summary">
+                      <p class="comparison-score">
+                        Community score:
+                        <span id="cmp-nik-score">0</span>
+                        –
+                        <span id="cmp-lev-score">0</span>
+                      </p>
+                      <p class="comparison-votes">
+                        Total votes:
+                        <span id="cmp-total-votes">0</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <div class="sidebar-divider-left"></div>
             <section class="hero">
               <div class="hero-inner">
                 <div class="hero-copy">

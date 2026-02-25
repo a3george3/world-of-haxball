@@ -304,11 +304,10 @@ a {
 }
 
 .hero-kicker {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: var(--accent);
-  margin-bottom: 12px;
+      font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 24px;
 }
 
 .hero h1 {
@@ -2738,3 +2737,242 @@ a {
     ),
     url("/assets/haxball-bg-4k.png") center center / cover no-repeat fixed;
 } */
+
+/* =========================================
+   PLAYER COMPARISON (HOME PAGE) – GLOWY
+========================================= */
+
+.comparison-section {
+  margin-bottom: 40px;
+}
+
+/* wrapper cu glow fin în jur */
+.comparison-inner {
+  position: relative;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.12), transparent 55%),
+              var(--bg-soft);
+  /* border-radius: 20px; */
+  padding: 24px 24px 26px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(15, 23, 42, 0.9);
+  overflow: hidden;
+}
+
+/* inel de glow animat pe margini */
+.comparison-inner::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    rgba(56, 189, 248, 0.0),
+    rgba(56, 189, 248, 0.5),
+    rgba(244, 63, 94, 0.5),
+    rgba(168, 85, 247, 0.6),
+    rgba(56, 189, 248, 0.5),
+    rgba(56, 189, 248, 0.0)
+  );
+  opacity: 0.3;
+  filter: blur(10px);
+  z-index: -1;
+  animation: comparisonGlow 12s linear infinite;
+}
+
+@keyframes comparisonGlow {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0.35;
+  }
+}
+
+.comparison-header {
+  margin-bottom: 12px;
+}
+
+.comparison-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f9fafb;
+  margin-top: 4px;
+}
+
+.comparison-content {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* imaginea – glow colorat, ca în banner */
+.comparison-image {
+  flex: 1.2;
+  min-width: 260px;
+}
+
+.comparison-image img {
+  width: 100%;
+  border-radius: 18px;
+  display: block;
+  box-shadow:
+    0 0 30px rgba(52, 211, 153, 0.45),
+    0 0 60px rgba(59, 130, 246, 0.6);
+}
+
+/* cardul de vot – accent mov/verde */
+.comparison-vote-card {
+  flex: 1;
+  min-width: 260px;
+  background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 60%),
+              radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.22), transparent 60%),
+              #020617;
+  border-radius: 18px;
+  padding: 16px 18px 18px;
+  border: 1px solid rgba(129, 140, 248, 0.65);
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.9),
+    0 0 25px rgba(59, 130, 246, 0.45);
+}
+
+.comparison-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #e5e7eb;
+}
+
+.comparison-text {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+/* formularul – rânduri compacte, curate */
+.comparison-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comparison-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.comparison-label {
+  font-size: 13px;
+  color: #e5e7eb;
+  min-width: 110px;
+}
+
+.comparison-options {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.comparison-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #e5e7eb;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.comparison-options label:hover {
+  background: rgba(67, 56, 202, 0.3);
+  border-color: rgba(129, 140, 248, 0.9);
+  box-shadow: 0 0 14px rgba(129, 140, 248, 0.7);
+}
+
+.comparison-options input[type="radio"] {
+  accent-color: #a855f7;
+  cursor: pointer;
+}
+
+/* butonul – gradient + puls ușor */
+.comparison-submit {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 13px;
+  padding: 8px 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e, #4f46e5);
+  border: none;
+  box-shadow:
+    0 10px 25px rgba(34, 197, 94, 0.45),
+    0 0 18px rgba(79, 70, 229, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+.comparison-submit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 0% 0%, rgba(248, 250, 252, 0.35), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.comparison-submit:hover::after {
+  opacity: 1;
+}
+
+.comparison-submit:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 16px 35px rgba(34, 197, 94, 0.55),
+    0 0 26px rgba(79, 70, 229, 0.85);
+}
+
+/* sumarul de scor + total votes */
+.comparison-summary {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+.comparison-score {
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.comparison-votes {
+  margin-top: 2px;
+  color: #a5b4fc;
+}
+
+@media (max-width: 900px) {
+  .comparison-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .comparison-row {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+

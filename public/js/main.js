@@ -667,6 +667,308 @@ function initProsettingsTable() {
 }
 
 // =========================================
+//  PLAYER COMPARISON (nik vs Levitan)
+// =========================================
+
+async function loadComparisonSummary() {
+  const scoreNikEl = document.getElementById("cmp-nik-score");
+  const scoreLevEl = document.getElementById("cmp-lev-score");
+  const totalVotesEl = document.getElementById("cmp-total-votes");
+
+  if (!scoreNikEl || !scoreLevEl || !totalVotesEl) return;
+
+  try {
+    const res = await fetch("/api/comparison/nik-levitan");
+    if (!res.ok) {
+      console.error("Comparison summary error:", res.status);
+      return;
+    }
+
+    const data = await res.json();
+
+    scoreNikEl.textContent = data.nikScore ?? 0;
+    scoreLevEl.textContent = data.levScore ?? 0;
+    totalVotesEl.textContent = data.totalVotes ?? 0;
+  } catch (err) {
+    console.error("Comparison summary fetch error:", err);
+  }
+}
+
+function setupComparisonVoting() {
+  const form = document.getElementById("comparison-form");
+  const msg = document.getElementById("comparison-message");
+  if (!form || !msg) return; // nu suntem pe index sau nu există secțiunea
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const payload = {
+      game_iq: formData.get("game_iq"),
+      skill: formData.get("skill"),
+      positioning: formData.get("positioning"),
+      finishing: formData.get("finishing"),
+      defending: formData.get("defending"),
+    };
+
+    // verificăm că toate sunt completate
+    for (const [key, value] of Object.entries(payload)) {
+      if (!value) {
+        msg.textContent = "Please vote in all categories.";
+        msg.classList.add("error");
+        showVoteToast("Please vote in all categories.", true);
+        return;
+      }
+    }
+
+    try {
+      const res = await fetch("/api/comparison/nik-levitan/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const errorMessage =
+          res.status === 401
+            ? "You must be logged in to vote."
+            : data.message || "Could not register your vote.";
+
+        msg.textContent = errorMessage;
+        msg.classList.remove("success");
+        msg.classList.add("error");
+
+        showVoteToast(errorMessage, true);
+        return;
+      }
+
+      msg.textContent = "Thank you for your vote!";
+      msg.classList.remove("error");
+      msg.classList.add("success");
+
+      showVoteToast("Vote recorded successfully!");
+
+      // reîncărcăm sumarul
+      loadComparisonSummary();
+
+      // opțional: blocăm formularul după vot
+      Array.from(form.elements).forEach((el) => {
+        if (el.tagName === "INPUT" || el.tagName === "BUTTON") {
+          el.disabled = true;
+        }
+      });
+    } catch (err) {
+      console.error("Comparison vote error:", err);
+      msg.textContent = "Server error while voting.";
+      msg.classList.remove("success");
+      msg.classList.add("error");
+      showVoteToast("Server error while voting.", true);
+    }
+  });
+
+  // la load, aducem și sumarul
+  loadComparisonSummary();
+}
+
+// function initComparisonParticles() {
+//   const canvas = document.getElementById("comparison-particles");
+//   if (!canvas) return;
+
+//   const ctx = canvas.getContext("2d");
+
+//   function resize() {
+//     const dpr = window.devicePixelRatio || 1;
+//     const rect = canvas.getBoundingClientRect();
+//     canvas.width = rect.width * dpr;
+//     canvas.height = rect.height * dpr;
+//     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+//   }
+
+//   resize();
+//   window.addEventListener("resize", resize);
+
+//   // -------- CONFIG --------
+//   const orbCount = 40;     // „nebuloase” mari care pulsează
+//   const sparkCount = 140;  // scântei cu dâră
+//   const sparks = [];
+//   const orbs = [];
+
+//   // centrele: stânga (nik), centru (VS), dreapta (Levitan)
+//   function getEmitters() {
+//     const rect = canvas.getBoundingClientRect();
+//     const w = rect.width;
+//     const h = rect.height;
+
+//     return {
+//       left: { x: w * 0.23, y: h * 0.55 },
+//       center: { x: w * 0.5, y: h * 0.45 },
+//       right: { x: w * 0.77, y: h * 0.55 },
+//     };
+//   }
+
+//   // inițializare orbs (bule mari luminoase)
+//   const emit = getEmitters();
+//   for (let i = 0; i < orbCount; i++) {
+//     const side = i < orbCount / 3 ? "left" : i < (2 * orbCount) / 3 ? "center" : "right";
+//     const base = emit[side];
+
+//     orbs.push({
+//       side,
+//       baseX: base.x + (Math.random() - 0.5) * 70,
+//       baseY: base.y + (Math.random() - 0.5) * 70,
+//       radius: 12 + Math.random() * 18,
+//       angle: Math.random() * Math.PI * 2,
+//       speed: 0.01 + Math.random() * 0.02,
+//       offset: 6 + Math.random() * 10,
+//       hue:
+//         side === "left"
+//           ? 18 + Math.random() * 20 // roșiatic
+//           : side === "right"
+//           ? 205 + Math.random() * 20 // albastru
+//           : 130 + Math.random() * 20, // verde
+//       alphaBase: 0.25 + Math.random() * 0.3,
+//     });
+//   }
+
+//   // inițializare scântei
+//   function spawnSpark(burstSide) {
+//     const emitters = getEmitters();
+//     const side =
+//       burstSide ||
+//       (Math.random() < 0.4 ? "left" : Math.random() < 0.7 ? "right" : "center");
+
+//     const base = emitters[side];
+
+//     const angle =
+//       side === "left"
+//         ? -0.2 + Math.random() * 0.8 // răspândire spre dreapta
+//         : side === "right"
+//         ? (Math.PI - 0.6) + Math.random() * 0.8 // răspândire spre stânga
+//         : -Math.PI / 2 + (Math.random() - 0.5) * 1.4; // centru
+
+//     const speed = 1.1 + Math.random() * 1.9;
+
+//     const hue =
+//       side === "left"
+//         ? 10 + Math.random() * 30
+//         : side === "right"
+//         ? 200 + Math.random() * 30
+//         : 120 + Math.random() * 30;
+
+//     sparks.push({
+//       side,
+//       x: base.x + (Math.random() - 0.5) * 35,
+//       y: base.y + (Math.random() - 0.5) * 35,
+//       prevX: base.x,
+//       prevY: base.y,
+//       vx: Math.cos(angle) * speed,
+//       vy: Math.sin(angle) * speed,
+//       life: 0,
+//       maxLife: 40 + Math.random() * 30,
+//       hue,
+//     });
+
+//     if (sparks.length > sparkCount) {
+//       sparks.splice(0, sparks.length - sparkCount);
+//     }
+//   }
+
+//   // pre-spawn câteva scântei
+//   for (let i = 0; i < sparkCount / 2; i++) spawnSpark();
+
+//   let lastTime = performance.now();
+//   let burstTimer = 0;
+
+//   function animate(now) {
+//     requestAnimationFrame(animate);
+//     const dt = (now - lastTime) || 16;
+//     lastTime = now;
+
+//     const rect = canvas.getBoundingClientRect();
+//     const w = rect.width;
+//     const h = rect.height;
+
+//     // fundal „motion blur” pentru dâre
+//     ctx.globalCompositeOperation = "source-over";
+//     ctx.fillStyle = "rgba(0, 4, 20, 0.45)";
+//     ctx.fillRect(0, 0, w, h);
+
+//     // ORBS – nebuloase pulsante
+//     ctx.globalCompositeOperation = "lighter";
+//     orbs.forEach((o) => {
+//       o.angle += o.speed * dt * 0.05;
+
+//       const ox = Math.cos(o.angle) * o.offset;
+//       const oy = Math.sin(o.angle) * o.offset;
+
+//       const x = o.baseX + ox;
+//       const y = o.baseY + oy;
+
+//       const pulse = 0.5 + Math.sin(now * 0.002 + o.angle) * 0.3;
+//       const alpha = o.alphaBase * (0.6 + pulse * 0.8);
+
+//       const radius = o.radius * (0.7 + pulse * 0.4);
+
+//       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+//       gradient.addColorStop(0, `hsla(${o.hue}, 100%, 65%, ${alpha})`);
+//       gradient.addColorStop(1, `hsla(${o.hue}, 100%, 10%, 0)`);
+
+//       ctx.beginPath();
+//       ctx.fillStyle = gradient;
+//       ctx.arc(x, y, radius, 0, Math.PI * 2);
+//       ctx.fill();
+//     });
+
+//     // SCÂNTEI – dâre agresive
+//     sparks.forEach((s) => {
+//       s.life += dt * 0.06;
+//       if (s.life > s.maxLife) {
+//         // re-spawn
+//         s.life = 0;
+//         const side = Math.random() < 0.5 ? "left" : "right";
+//         spawnSpark(side);
+//         return;
+//       }
+
+//       s.prevX = s.x;
+//       s.prevY = s.y;
+//       s.x += s.vx;
+//       s.y += s.vy;
+
+//       // ușor „gravitație” spre centru vertical
+//       s.vy += (Math.random() - 0.5) * 0.04;
+
+//       const t = 1 - s.life / s.maxLife;
+//       const alpha = Math.max(0, t);
+//       const width = 1.2 + (1 - t) * 2.4;
+
+//       ctx.beginPath();
+//       ctx.moveTo(s.prevX, s.prevY);
+//       ctx.lineTo(s.x, s.y);
+//       ctx.strokeStyle = `hsla(${s.hue}, 100%, 65%, ${alpha})`;
+//       ctx.lineWidth = width;
+//       ctx.stroke();
+//     });
+
+//     // din când în când, burst mare
+//     burstTimer += dt;
+//     if (burstTimer > 900 + Math.random() * 900) {
+//       burstTimer = 0;
+//       const sideRand = Math.random();
+//       const side =
+//         sideRand < 0.4 ? "left" : sideRand < 0.8 ? "right" : "center";
+//       for (let i = 0; i < 18; i++) {
+//         spawnSpark(side);
+//       }
+//     }
+//   }
+
+//   requestAnimationFrame(animate);
+// }
+
+// =========================================
 //  CODUL TĂU EXISTENT + AUTH PAGES
 // =========================================
 
@@ -876,5 +1178,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // verificăm dacă userul e logat când se încarcă pagina
   checkAuthStatus();
 
+  initProsettingsTable();
+  setupComparisonVoting()
+  // initComparisonParticles();;
   initProsettingsTable();
 });
