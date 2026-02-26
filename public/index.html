@@ -80,9 +80,13 @@
                   <li>
                     <a href="na.html" class="dropdown-item">North America</a>
                   </li>
-                  <li><a href="sa.html" class="dropdown-item">South America</a></li>
+                  <li>
+                    <a href="sa.html" class="dropdown-item">South America</a>
+                  </li>
                   <li><a href="asia.html" class="dropdown-item">Asia</a></li>
-                  <li><a href="africa.html" class="dropdown-item">Africa</a></li>
+                  <li>
+                    <a href="africa.html" class="dropdown-item">Africa</a>
+                  </li>
                   <li><a href="#" class="dropdown-item">Turkey</a></li>
                 </ul>
               </li>
@@ -134,7 +138,9 @@
               <div class="comparison-inner">
                 <div class="comparison-header">
                   <p class="hero-kicker">PLAYER COMPARISON</p>
-                  <h2 class="comparison-title"><span class="small-region">EUROPE</span>nik vs Levitan</h2>
+                  <h2 class="comparison-title">
+                    <span class="small-region">EUROPE</span>nik vs Levitan
+                  </h2>
                 </div>
 
                 <div class="comparison-content">
@@ -287,57 +293,60 @@
                         <span id="cmp-lev-score">0</span>
                       </p>
                       <!-- Toggle detalii voturi -->
-<button
-  type="button"
-  id="am-details-toggle"
-  class="am-details-toggle"
->
-  Extend score details
-  <span class="am-details-toggle-icon">▼</span>
-</button>
+                      <button
+                        type="button"
+                        id="am-details-toggle"
+                        class="am-details-toggle"
+                      >
+                        Extend score details
+                        <span class="am-details-toggle-icon">▼</span>
+                      </button>
 
-<!-- Panoul care se extinde / se strânge -->
-<div id="am-details-panel" class="am-details-panel am-details-panel-hidden">
-  <div class="am-details-row">
-    <span class="am-details-label">Game IQ</span>
-    <span class="am-details-values">
-      nik: <span id="am-gameiq-nik">0</span> •
-      Levitan: <span id="am-gameiq-levitan">0</span>
-    </span>
-  </div>
+                      <!-- Panoul care se extinde / se strânge -->
+                      <div
+                        id="am-details-panel"
+                        class="am-details-panel am-details-panel-hidden"
+                      >
+                        <div class="am-details-row">
+                          <span class="am-details-label">Game IQ</span>
+                          <span class="am-details-values">
+                            nik: <span id="am-gameiq-nik">0</span> • Levitan:
+                            <span id="am-gameiq-levitan">0</span>
+                          </span>
+                        </div>
 
-  <div class="am-details-row">
-    <span class="am-details-label">Skill</span>
-    <span class="am-details-values">
-      nik: <span id="am-skill-nik">0</span> •
-      Levitan: <span id="am-skill-levitan">0</span>
-    </span>
-  </div>
+                        <div class="am-details-row">
+                          <span class="am-details-label">Skill</span>
+                          <span class="am-details-values">
+                            nik: <span id="am-skill-nik">0</span> • Levitan:
+                            <span id="am-skill-levitan">0</span>
+                          </span>
+                        </div>
 
-  <div class="am-details-row">
-    <span class="am-details-label">Positioning</span>
-    <span class="am-details-values">
-      nik: <span id="am-positioning-nik">0</span> •
-      Levitan: <span id="am-positioning-levitan">0</span>
-    </span>
-  </div>
+                        <div class="am-details-row">
+                          <span class="am-details-label">Positioning</span>
+                          <span class="am-details-values">
+                            nik: <span id="am-positioning-nik">0</span> •
+                            Levitan: <span id="am-positioning-levitan">0</span>
+                          </span>
+                        </div>
 
-  <div class="am-details-row">
-    <span class="am-details-label">Finishing</span>
-    <span class="am-details-values">
-      nik: <span id="am-finishing-nik">0</span> •
-      Levitan: <span id="am-finishing-levitan">0</span>
-    </span>
-  </div>
+                        <div class="am-details-row">
+                          <span class="am-details-label">Finishing</span>
+                          <span class="am-details-values">
+                            nik: <span id="am-finishing-nik">0</span> • Levitan:
+                            <span id="am-finishing-levitan">0</span>
+                          </span>
+                        </div>
 
-  <div class="am-details-row">
-    <span class="am-details-label">Defending</span>
-    <span class="am-details-values">
-      nik: <span id="am-defending-nik">0</span> •
-      Levitan: <span id="am-defending-levitan">0</span>
-    </span>
-  </div>
-</div>
+                        <div class="am-details-row">
+                          <span class="am-details-label">Defending</span>
+                          <span class="am-details-values">
+                            nik: <span id="am-defending-nik">0</span> • Levitan:
+                            <span id="am-defending-levitan">0</span>
+                          </span>
+                        </div>
+                      </div>
                       <p class="comparison-votes">
                         Total votes:
                         <span id="cmp-total-votes">0</span>
@@ -416,6 +425,25 @@
               <div class="ranking-footer">
                 <a href="ranking.html" class="ranking-view-all-link">
                   View full ranking →
+                </a>
+              </div>
+            </article>
+
+            <div class="sidebar-divider"></div>
+
+            <article class="sidebar-card forum-latest-card">
+              <h3 class="ranking-title">Latest forum activity</h3>
+              <p class="ranking-subtitle">
+                Most recently active discussions from the community.
+              </p>
+
+              <div id="latest-threads-list" class="latest-threads-list">
+                <!-- populat din JS -->
+              </div>
+
+              <div class="ranking-footer">
+                <a href="forum.html" class="ranking-view-all-link">
+                  View all discussions →
                 </a>
               </div>
             </article>

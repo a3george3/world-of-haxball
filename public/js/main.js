@@ -276,8 +276,7 @@ async function loadForumThreads(page = 1) {
 
     // textul cu numărul de threaduri – folosim TOTAL, nu doar pe pagină
     if (countEl) {
-      countEl.textContent =
-        total === 1 ? "1 thread" : `${total} threads`;
+      countEl.textContent = total === 1 ? "1 thread" : `${total} threads`;
     }
 
     // ----- Paginare (Prev / Next) -----
@@ -324,7 +323,7 @@ function setupNewThreadForm() {
   const msg = document.getElementById("forum-new-thread-message");
   if (!form || !msg) return;
 
-   form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const title = document.getElementById("thread-title").value.trim();
@@ -359,7 +358,7 @@ function setupNewThreadForm() {
 
       const data = await res.json();
 
-       if (!res.ok) {
+      if (!res.ok) {
         const errorMessage =
           res.status === 401
             ? "You must be logged in to post."
@@ -432,7 +431,6 @@ function renderFormattedText(raw) {
 // =========================================
 //  FORUM – PAGINA UNUI SINGUR THREAD
 // =========================================
-
 
 async function loadThreadPage() {
   const container = document.getElementById("thread-view");
@@ -657,10 +655,10 @@ function initProsettingsTable() {
 
       if (isOpen) {
         detailsRow.style.display = "none";
-        btn.textContent = "+";   // închis
+        btn.textContent = "+"; // închis
       } else {
         detailsRow.style.display = "table-row";
-        btn.textContent = "−";   // deschis
+        btn.textContent = "−"; // deschis
       }
     });
   });
@@ -716,11 +714,23 @@ function updateComparisonDetails(summary) {
   if (!testEl) return;
 
   const mapping = [
-    { catKey: "game_iq",     nikId: "am-gameiq-nik",      levId: "am-gameiq-levitan" },
-    { catKey: "skill",       nikId: "am-skill-nik",       levId: "am-skill-levitan" },
-    { catKey: "positioning", nikId: "am-positioning-nik", levId: "am-positioning-levitan" },
-    { catKey: "finishing",   nikId: "am-finishing-nik",   levId: "am-finishing-levitan" },
-    { catKey: "defending",   nikId: "am-defending-nik",   levId: "am-defending-levitan" },
+    { catKey: "game_iq", nikId: "am-gameiq-nik", levId: "am-gameiq-levitan" },
+    { catKey: "skill", nikId: "am-skill-nik", levId: "am-skill-levitan" },
+    {
+      catKey: "positioning",
+      nikId: "am-positioning-nik",
+      levId: "am-positioning-levitan",
+    },
+    {
+      catKey: "finishing",
+      nikId: "am-finishing-nik",
+      levId: "am-finishing-levitan",
+    },
+    {
+      catKey: "defending",
+      nikId: "am-defending-nik",
+      levId: "am-defending-levitan",
+    },
   ];
 
   mapping.forEach(({ catKey, nikId, levId }) => {
@@ -728,7 +738,7 @@ function updateComparisonDetails(summary) {
 
     // în JSON vine { nik: number, Levitan: number } (cu L mare)
     const nikVal = cat.nik ?? 0;
-    const levVal = (cat.Levitan ?? cat.levitan ?? 0);
+    const levVal = cat.Levitan ?? cat.levitan ?? 0;
 
     const nikEl = document.getElementById(nikId);
     const levEl = document.getElementById(levId);
@@ -1062,6 +1072,69 @@ function setupComparisonVoting() {
 // }
 
 // =========================================
+//  SIDEBAR – LAST 5 FORUM THREADS
+// =========================================
+
+async function loadLatestForumThreads() {
+  const container = document.getElementById("latest-threads-list");
+  if (!container) return; // nu suntem pe index
+
+  container.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch("/api/forum/threads/latest");
+    if (!res.ok) {
+      container.innerHTML = "<p>Could not load discussions.</p>";
+      return;
+    }
+
+    const threads = await res.json();
+    container.innerHTML = "";
+
+    if (!threads.length) {
+      container.innerHTML = "<p>No discussions yet.</p>";
+      return;
+    }
+
+    threads.forEach((t) => {
+      const item = document.createElement("div");
+      item.className = "latest-thread-item";
+
+      const lastInfo = t.last_reply_author
+        ? `Last reply by ${t.last_reply_author}`
+        : "No replies yet";
+
+      item.innerHTML = `
+  <div class="latest-thread-left">
+    <div class="latest-thread-title">${t.title}</div>
+    <div class="latest-thread-meta">
+      ${lastInfo}
+    </div>
+  </div>
+
+  <div class="latest-thread-replies">
+    <span class="replies-icon">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+      </svg>
+    </span>
+    <span class="replies-count">${t.reply_count || 0}</span>
+  </div>
+`;
+
+      item.addEventListener("click", () => {
+        window.location.href = `thread.html?id=${t.id}`;
+      });
+
+      container.appendChild(item);
+    });
+  } catch (err) {
+    console.error("Latest threads error:", err);
+    container.innerHTML = "<p>Server error.</p>";
+  }
+}
+
+// =========================================
 //  CODUL TĂU EXISTENT + AUTH PAGES
 // =========================================
 
@@ -1241,7 +1314,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-   // --- FORUM BUTTON "NEW THREAD" ---
+  // --- FORUM BUTTON "NEW THREAD" ---
   const newThreadBtn = document.getElementById("forum-new-thread-btn");
   if (newThreadBtn) {
     newThreadBtn.addEventListener("click", () => {
@@ -1271,7 +1344,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // verificăm dacă userul e logat când se încarcă pagina
 
   // initProsettingsTable();
-  setupComparisonVoting()
+  setupComparisonVoting();
+  loadLatestForumThreads();
   // initComparisonParticles();;
   initProsettingsTable();
   setupAmDetailsToggle();

@@ -361,6 +361,55 @@ app.get("/api/forum/threads", async (req, res) => {
   }
 });
 
+// =========================================
+//   FORUM – LAST 5 ACTIVE THREADS (SIDEBAR)
+// =========================================
+
+app.get("/api/forum/threads/latest", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        t.id,
+        t.title,
+        t.reply_count,
+        t.created_at,
+        u.username AS author,
+        lr_info.last_reply_at,
+        lr.username AS last_reply_author
+      FROM forum_threads t
+      JOIN users u ON u.id = t.user_id
+      LEFT JOIN (
+        SELECT 
+          fr.thread_id,
+          fr.user_id,
+          fr.created_at AS last_reply_at
+        FROM forum_replies fr
+        INNER JOIN (
+          SELECT thread_id, MAX(created_at) AS max_created_at
+          FROM forum_replies
+          GROUP BY thread_id
+        ) frmax
+          ON fr.thread_id = frmax.thread_id
+         AND fr.created_at = frmax.max_created_at
+      ) AS lr_info
+        ON lr_info.thread_id = t.id
+      LEFT JOIN users lr
+        ON lr.id = lr_info.user_id
+      ORDER BY
+        t.is_pinned DESC,
+        COALESCE(lr_info.last_reply_at, t.created_at) DESC
+      LIMIT 5
+      `
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error loading latest threads:", err);
+    res.status(500).json({ message: "Error loading latest threads" });
+  }
+});
+
 // POST /api/forum/threads  -> creează un thread nou (doar logat)
 app.post("/api/forum/threads", authRequired, async (req, res) => {
   const { title, body } = req.body;
