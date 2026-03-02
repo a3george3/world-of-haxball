@@ -563,29 +563,62 @@ app.post("/api/forum/threads/:id/replies", authRequired, async (req, res) => {
   }
 });
 
-// DELETE /api/forum/threads/:id  -> doar ADMIN
+// DELETE /api/forum/threads/:threadId/replies/:replyId
+// - admin: poate șterge orice reply
+// - user normal: își poate șterge doar propriul reply
 app.delete(
-  "/api/forum/threads/:id",
+  "/api/forum/threads/:threadId/replies/:replyId",
   authRequired,
-  adminRequired,
   async (req, res) => {
-    const threadId = req.params.id;
+    const threadId = Number(req.params.threadId);
+    const replyId = Number(req.params.replyId);
+    const userId = req.user.id;
+    const isAdmin = !!req.user.is_admin;
+
+    if (!threadId || !replyId) {
+      return res.status(400).json({ message: "Invalid ids." });
+    }
 
     try {
-      const [result] = await pool.query(
-        `DELETE FROM forum_threads WHERE id = ?`,
+      // luăm reply-ul
+      const [rows] = await pool.query(
+        `SELECT id, thread_id, user_id FROM forum_replies WHERE id = ? AND thread_id = ?`,
+        [replyId, threadId],
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ message: "Reply not found." });
+      }
+
+      const reply = rows[0];
+
+      // verificăm permisiunea
+      if (!isAdmin && reply.user_id !== userId) {
+        return res
+          .status(403)
+          .json({ message: "You are not allowed to delete this reply." });
+      }
+
+      // ștergem reply-ul
+      await pool.query(
+        `DELETE FROM forum_replies WHERE id = ? AND thread_id = ?`,
+        [replyId, threadId],
+      );
+
+      // ajustăm reply_count (simplu -1)
+      await pool.query(
+        `
+        UPDATE forum_threads
+        SET reply_count = GREATEST(reply_count - 1, 0)
+        WHERE id = ?
+        `,
         [threadId],
       );
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Thread not found" });
-      }
-
-      // replies se șterg automat (ON DELETE CASCADE)
-      res.json({ ok: true, message: "Thread deleted successfully" });
+      return res.json({ ok: true, message: "Reply deleted successfully." });
     } catch (err) {
-      console.error("Error deleting thread:", err);
-      res.status(500).json({ message: "Error deleting thread" });
+      console.error("Error deleting reply:", err);
+      return res.status(500).json({ message: "Error deleting reply." });
     }
   },
 );

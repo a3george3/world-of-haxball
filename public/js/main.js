@@ -186,6 +186,9 @@ function updateNavbarForUser(user) {
   const navUser = document.getElementById("nav-user");
   const navUsername = document.getElementById("nav-username");
 
+  // Ținem user-ul curent global, ca să știm cine e când afișăm reply-urile
+  window.currentUser = user || null;
+
   if (!loginItem || !navUser || !navUsername) return;
 
   if (user) {
@@ -407,8 +410,34 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
+function extractYouTubeId(url) {
+  try {
+    // scoatem eventualele ghilimele / spații
+    const cleanUrl = url.split('"')[0];
+
+    // format scurt: https://youtu.be/VIDEOID
+    const shortIndex = cleanUrl.indexOf("youtu.be/");
+    if (shortIndex !== -1) {
+      const idPart = cleanUrl.substring(shortIndex + "youtu.be/".length);
+      return idPart.split(/[?&#]/)[0]; // oprim la ? sau & sau #
+    }
+
+    // format lung: https://www.youtube.com/watch?v=VIDEOID
+    const watchIndex = cleanUrl.indexOf("watch?v=");
+    if (watchIndex !== -1) {
+      const idPart = cleanUrl.substring(watchIndex + "watch?v=".length);
+      return idPart.split(/[?&#]/)[0];
+    }
+
+    return null;
+  } catch (e) {
+    console.error("extractYouTubeId error:", e);
+    return null;
+  }
+}
+
 function renderFormattedText(raw) {
-  let safe = escapeHtml(raw);
+  let safe = escapeHtml(raw || "");
 
   // **bold**
   safe = safe.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
@@ -416,18 +445,46 @@ function renderFormattedText(raw) {
   // *italic*
   safe = safe.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-  // link simplu: http:// sau https://
+  // @username -> badge de mențiune
+  safe = safe.replace(
+    /@([a-zA-Z0-9_]{2,24})/g,
+    '<span class="mention-tag">@$1</span>',
+  );
+
+  // 1) link-uri simple
   safe = safe.replace(
     /(https?:\/\/[^\s]+)/g,
     '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
   );
 
-  // newline -> <br>
+  // 2) newline -> <br>
   safe = safe.replace(/\n/g, "<br>");
+
+  // 3) transformăm link-urile YouTube în iframe
+  safe = safe.replace(
+    /<a href="(https?:\/\/[^"]+)"[^>]*>[^<]+<\/a>/g,
+    (match, url) => {
+      const videoId = extractYouTubeId(url);
+      if (!videoId) {
+        return match;
+      }
+
+      return `
+        <div class="video-embed">
+          <iframe
+            src="https://www.youtube.com/embed/${videoId}"
+            title="YouTube video"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      `;
+    },
+  );
 
   return safe;
 }
-
 // =========================================
 //  FORUM – PAGINA UNUI SINGUR THREAD
 // =========================================
@@ -465,8 +522,8 @@ async function loadThreadPage() {
           </p>
 
           <div class="thread-body">
-            <p>${renderFormattedText(thread.body)}</p>
-          </div>
+  ${renderFormattedText(thread.body)}
+</div>
         </div>
       </header>
 
@@ -484,42 +541,72 @@ async function loadThreadPage() {
     } else {
       repliesList.innerHTML = "";
       replies.forEach((r) => {
-        const div = document.createElement("div");
-        div.className = "thread-reply";
+  const div = document.createElement("div");
+  div.className = "thread-reply";
 
-        // dacă e reply la alt reply, construim un mic citat
-        let quoteHtml = "";
-        if (r.parent_id && r.parent_body && r.parent_author) {
-          const parentSnippet =
-            r.parent_body.length > 120
-              ? r.parent_body.slice(0, 120) + "…"
-              : r.parent_body;
+  // cine e logat acum?
+  const cu = window.currentUser || null;
+  const canDelete =
+    cu && (cu.is_admin || cu.username === r.author);
 
-          quoteHtml = `
-            <div class="reply-quote-box inline-quote">
-              <div class="reply-quote-author">Replying to ${r.parent_author}</div>
-              <div class="reply-quote-text">${renderFormattedText(parentSnippet)}</div>
-            </div>
-          `;
-        }
+  // dacă e reply la alt reply, construim un mic citat
+  let quoteHtml = "";
+  if (r.parent_id && r.parent_body && r.parent_author) {
+    const parentSnippet =
+      r.parent_body.length > 120
+        ? r.parent_body.slice(0, 120) + "…"
+        : r.parent_body;
 
-        div.innerHTML = `
-          <div class="thread-reply-meta">
-            <span>${r.author}</span>
-            <span>• ${new Date(r.created_at).toLocaleString()}</span>
-          </div>
-          ${quoteHtml}
-          <p>${renderFormattedText(r.body)}</p>
+    quoteHtml = `
+      <div class="reply-quote-box inline-quote">
+        <div class="reply-quote-author">Replying to ${r.parent_author}</div>
+        <div class="reply-quote-text">${renderFormattedText(parentSnippet)}</div>
+      </div>
+    `;
+  }
+
+  div.innerHTML = `
+    <div class="thread-reply-meta">
+      <div class="thread-reply-meta-left">
+        <span class="reply-author">${r.author}</span>
+        <span class="reply-date">• ${new Date(
+          r.created_at,
+        ).toLocaleString()}</span>
+      </div>
+
+      <div class="thread-reply-meta-right">
+        <button
+          class="thread-reply-btn"
+          data-reply-id="${r.id}"
+          data-author="${r.author}"
+        >
+          Reply
+        </button>
+
+        ${
+          canDelete
+            ? `
           <button
-            class="thread-reply-btn"
+            class="thread-reply-delete-btn"
             data-reply-id="${r.id}"
-            data-author="${r.author}"
+            title="Delete reply"
           >
-            Reply
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path fill="currentColor" d="M9 3v1H4v2h16V4h-5V3H9zm1 5v9h2V8h-2zm4 0v9h2V8h-2zM6 8v9h2V8H6z"/>
+            </svg>
           </button>
-        `;
-        repliesList.appendChild(div);
-      });
+        `
+            : ""
+        }
+      </div>
+    </div>
+
+    ${quoteHtml}
+    <p>${renderFormattedText(r.body)}</p>
+  `;
+
+  repliesList.appendChild(div);
+});
 
       // attach click pentru butoanele "Reply"
       const quoteBox = document.getElementById("reply-quote-box");
@@ -548,6 +635,51 @@ async function loadThreadPage() {
           textarea.focus();
         });
       });
+      // --- attach click pentru delete
+const params2 = new URLSearchParams(window.location.search);
+const threadId = params2.get("id");
+
+document.querySelectorAll(".thread-reply-delete-btn").forEach((btn) => {
+  btn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+
+    const replyId = btn.getAttribute("data-reply-id");
+    if (!threadId || !replyId) return;
+
+    const ok = confirm("Delete this reply?");
+    if (!ok) return;
+
+    try {
+      const res = await fetch(
+        `/api/forum/threads/${threadId}/replies/${replyId}`,
+        { method: "DELETE" },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showThreadToast(data.message || "Could not delete reply.", true);
+        return;
+      }
+
+      // scoatem reply-ul din DOM
+      const wrapper = btn.closest(".thread-reply");
+      if (wrapper) wrapper.remove();
+
+      // actualizăm textul "X replies" din header
+      const h2 = document.querySelector(".thread-replies > h2");
+      if (h2) {
+        const current = parseInt(h2.textContent, 10) || 0;
+        h2.textContent = `${Math.max(current - 1, 0)} replies`;
+      }
+
+      showThreadToast("Reply deleted.");
+    } catch (err) {
+      console.error("Delete reply error:", err);
+      showThreadToast("Server error deleting reply.", true);
+    }
+  });
+});
     }
   } catch (err) {
     console.error("Thread page error:", err);
@@ -1077,7 +1209,7 @@ function setupComparisonVoting() {
 
 async function loadLatestForumThreads() {
   const container = document.getElementById("latest-threads-list");
-  if (!container) return; // nu suntem pe index
+  if (!container) return;
 
   container.innerHTML = "Loading...";
 
@@ -1096,31 +1228,62 @@ async function loadLatestForumThreads() {
       return;
     }
 
-    threads.forEach((t) => {
+    threads.forEach((t, index) => {
       const item = document.createElement("div");
       item.className = "latest-thread-item";
+
+      const repliesCount = t.reply_count || 0;
+      const isHot = repliesCount > 10;
 
       const lastInfo = t.last_reply_author
         ? `Last reply by ${t.last_reply_author}`
         : "No replies yet";
 
-      item.innerHTML = `
-  <div class="latest-thread-left">
-    <div class="latest-thread-title">${t.title}</div>
-    <div class="latest-thread-meta">
-      ${lastInfo}
-    </div>
-  </div>
+      // ===== NEW badge logic (reply < 24h) =====
+      let isNew = false;
 
-  <div class="latest-thread-replies">
-    <span class="replies-icon">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
-      </svg>
-    </span>
-    <span class="replies-count">${t.reply_count || 0}</span>
-  </div>
-`;
+      if (t.last_reply_at) {
+        const lastReplyDate = new Date(t.last_reply_at);
+        const now = new Date();
+        const diffHours = (now - lastReplyDate) / (1000 * 60 * 60);
+        if (diffHours < 24) {
+          isNew = true;
+        }
+      }
+
+      item.innerHTML = `
+        <div class="latest-thread-left">
+          <div class="latest-thread-title">
+            ${t.title}
+            ${isNew ? '<span class="thread-new-badge">NEW</span>' : ""}
+          </div>
+          <div class="latest-thread-meta">
+            ${lastInfo}
+          </div>
+        </div>
+
+        <div class="latest-thread-replies ${isHot ? "hot-thread" : ""}">
+          <span class="replies-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z"/>
+            </svg>
+          </span>
+          <span class="replies-count">${repliesCount}</span>
+        </div>
+      `;
+
+      // ===== animație POP =====
+      item.style.opacity = "0";
+      item.style.transform = "translateY(15px)";
+
+      setTimeout(
+        () => {
+          item.style.transition = "all 0.4s ease";
+          item.style.opacity = "1";
+          item.style.transform = "translateY(0)";
+        },
+        100 + index * 70,
+      );
 
       item.addEventListener("click", () => {
         window.location.href = `thread.html?id=${t.id}`;
@@ -1349,5 +1512,62 @@ document.addEventListener("DOMContentLoaded", () => {
   // initComparisonParticles();;
   initProsettingsTable();
   setupAmDetailsToggle();
+  // ================================
+// REPLY TOOLBAR LOGIC
+// ================================
+
+const replyTextarea = document.getElementById("reply-body");
+
+if (replyTextarea) {
+
+  // AUTO EXPAND
+  replyTextarea.addEventListener("input", () => {
+    replyTextarea.style.height = "auto";
+    replyTextarea.style.height = replyTextarea.scrollHeight + "px";
+  });
+
+  // BOLD / ITALIC / QUOTE
+  document.querySelectorAll(".reply-tool-btn[data-tag]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tag = btn.getAttribute("data-tag");
+      const start = replyTextarea.selectionStart;
+      const end = replyTextarea.selectionEnd;
+      const selected = replyTextarea.value.substring(start, end);
+
+      let wrapped = "";
+
+      if (tag === "quote") {
+        wrapped = `\n> ${selected}\n`;
+      } else {
+        wrapped = `<${tag}>${selected}</${tag}>`;
+      }
+
+      replyTextarea.setRangeText(wrapped, start, end, "end");
+      replyTextarea.focus();
+    });
+  });
+
+  // YOUTUBE QUICK INSERT
+  const ytBtn = document.getElementById("yt-btn");
+  if (ytBtn) {
+    ytBtn.addEventListener("click", () => {
+      const url = prompt("Paste YouTube link:");
+      if (!url) return;
+
+      replyTextarea.value += `\n${url}\n`;
+      replyTextarea.focus();
+    });
+  }
+
+  // EMOJI QUICK INSERT
+  const emojiBtn = document.getElementById("emoji-btn");
+  if (emojiBtn) {
+    emojiBtn.addEventListener("click", () => {
+      replyTextarea.value += " 😊🔥🎮";
+      replyTextarea.focus();
+    });
+  }
+  
+}
   checkAuthStatus();
 });

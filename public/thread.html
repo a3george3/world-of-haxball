@@ -120,15 +120,25 @@
             <input type="hidden" id="reply-parent-id" />
 
             <form id="reply-form" class="forum-form">
-              <div class="form-group">
-                <label for="reply-body">Message</label>
-                <textarea id="reply-body" rows="4" required></textarea>
-              </div>
-              <button type="submit" class="btn-primary forum-submit-btn">
-                Post reply
-              </button>
-              <p id="reply-message" class="form-message"></p>
-            </form>
+  <div class="reply-toolbar">
+    <button type="button" class="reply-tool-btn" data-tag="b"><b>B</b></button>
+    <button type="button" class="reply-tool-btn" data-tag="i"><i>I</i></button>
+    <button type="button" class="reply-tool-btn" data-tag="quote">❝</button>
+    <button type="button" class="reply-tool-btn" id="yt-btn">▶</button>
+    <button type="button" class="reply-tool-btn" id="emoji-btn">😊</button>
+  </div>
+
+  <div class="form-group">
+    <label for="reply-body">Message</label>
+    <textarea id="reply-body" rows="4" required></textarea>
+  </div>
+
+  <button type="submit" class="btn-primary forum-submit-btn">
+    Post reply
+  </button>
+
+  <p id="reply-message" class="form-message"></p>
+</form>
           </section>
         </div>
       </section>
